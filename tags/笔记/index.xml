@@ -2,53 +2,53 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>笔记 on 乾之 三爻</title>
-    <link>https://yokonsan.github.io/tags/%E7%AC%94%E8%AE%B0/</link>
+    <link>https://yokonsan.com/tags/%E7%AC%94%E8%AE%B0/</link>
     <description>Recent content in 笔记 on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 23 Jan 2019 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Jan 2019 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Docker入门：核心组件</title>
-      <link>https://yokonsan.github.io/posts/2019/1/docker-core-component/</link>
+      <link>https://yokonsan.com/posts/2019/1/docker-core-component/</link>
       <pubDate>Wed, 23 Jan 2019 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2019/1/docker-core-component/</guid>
+      <guid>https://yokonsan.com/posts/2019/1/docker-core-component/</guid>
       <description>什么是Docker Docker是一个能够把开发的应用程序自动部署到容器的开源引擎，他设计的目的就是要加强程序员写代码的开发环境和应用部署的生产环境的一致性，降低开发环境的代码在生产环境无法正常执行的风</description>
     </item>
     
     <item>
       <title>读三体</title>
-      <link>https://yokonsan.github.io/posts/2018/8/read-three-body/</link>
+      <link>https://yokonsan.com/posts/2018/8/read-three-body/</link>
       <pubDate>Tue, 28 Aug 2018 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2018/8/read-three-body/</guid>
+      <guid>https://yokonsan.com/posts/2018/8/read-three-body/</guid>
       <description>最近我用了两个星期读完了刘慈欣的三体三部曲，《地球往事》、《黑暗森林》、《死神永生》。因为是科幻小说，作者从上帝视角，以宏大的时间跨度，去叙述两个文明在宇宙中为了生存，付诸的努力。本文尽量不叙述小说的</description>
     </item>
     
     <item>
       <title>优雅的写判断语句</title>
-      <link>https://yokonsan.github.io/posts/2018/5/write-judgment-sentences-gracefully/</link>
+      <link>https://yokonsan.com/posts/2018/5/write-judgment-sentences-gracefully/</link>
       <pubDate>Sun, 20 May 2018 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2018/5/write-judgment-sentences-gracefully/</guid>
+      <guid>https://yokonsan.com/posts/2018/5/write-judgment-sentences-gracefully/</guid>
       <description>一个程序之所以能自动做很多任务，是因为我们给他做好了条件判断。项目中，我们难免会使用if/else判断逻辑语句。对简单的情况而言，使用逻辑语句会很清晰简洁，而项目情况一旦复杂，或者判断层次变多，盲目的</description>
     </item>
     
     <item>
       <title>Python的定制类笔记</title>
-      <link>https://yokonsan.github.io/posts/2018/1/python-custom-class-notes/</link>
+      <link>https://yokonsan.com/posts/2018/1/python-custom-class-notes/</link>
       <pubDate>Sun, 28 Jan 2018 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2018/1/python-custom-class-notes/</guid>
+      <guid>https://yokonsan.com/posts/2018/1/python-custom-class-notes/</guid>
       <description>前言 最近在阅读flask源码的时候，经常看到一些python类中，类似于__xxx__的变量和 函数名，这些大多是在python中有特殊用途的。Python的class中有许多类似于这样 的函数，我们用他</description>
     </item>
     
     <item>
       <title>Flask不渲染显示sitemap.xml</title>
-      <link>https://yokonsan.github.io/posts/2017/12/flask-web-sitemap/</link>
+      <link>https://yokonsan.com/posts/2017/12/flask-web-sitemap/</link>
       <pubDate>Mon, 11 Dec 2017 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2017/12/flask-web-sitemap/</guid>
+      <guid>https://yokonsan.com/posts/2017/12/flask-web-sitemap/</guid>
       <description>嫌弃Wordprcess笨重速度慢，而且不支持markdown语法，就用hexo驱动做静态博客。又觉得hexo麻烦，不是很喜欢，就想着全凭自己的喜好来做一个功能齐全的博客网站，于是就有了这个小站。使用</description>
     </item>
     

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>源码 on 乾之 三爻</title>
-    <link>https://yokonsan.github.io/tags/%E6%BA%90%E7%A0%81/</link>
+    <link>https://yokonsan.com/tags/%E6%BA%90%E7%A0%81/</link>
     <description>Recent content in 源码 on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 13 Aug 2018 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 13 Aug 2018 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>从contextlib源码谈with语句</title>
-      <link>https://yokonsan.github.io/posts/2018/8/talking-with-from-the-ontextlib-source/</link>
+      <link>https://yokonsan.com/posts/2018/8/talking-with-from-the-ontextlib-source/</link>
       <pubDate>Mon, 13 Aug 2018 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2018/8/talking-with-from-the-ontextlib-source/</guid>
+      <guid>https://yokonsan.com/posts/2018/8/talking-with-from-the-ontextlib-source/</guid>
       <description>上一篇文章中，解决*RuntimeError: Working outside of application context.*错误，使用手动将应用上下文推入栈中： ctx = app.app_context() ctx.push() print(current_app.name) ctx.pop() 而 flask 文档中给我们的解决代码是： with app.app_context(): print(current_app.name) 它使用了python的with语句，使得代码</description>
     </item>
     

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>逆向 on 乾之 三爻</title>
-    <link>https://yokonsan.github.io/tags/%E9%80%86%E5%90%91/</link>
+    <link>https://yokonsan.com/tags/%E9%80%86%E5%90%91/</link>
     <description>Recent content in 逆向 on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 11 Feb 2021 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/%E9%80%86%E5%90%91/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 11 Feb 2021 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/%E9%80%86%E5%90%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>企查查请求头反爬破解</title>
-      <link>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</link>
+      <link>https://yokonsan.com/posts/2021/2/qcc-header-sign/</link>
       <pubDate>Thu, 11 Feb 2021 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</guid>
+      <guid>https://yokonsan.com/posts/2021/2/qcc-header-sign/</guid>
       <description>最近有朋友问我，qcc 网站做了一次反爬措施，要如何破解。 分析 我抓包大致看了下，该模块下的请求为 ajax请求，并且每次请求都会带上一个疑似身份验证的请求头，长这个样子： 首先搜索网页 html 源码，无法得知该信息</description>
     </item>
     

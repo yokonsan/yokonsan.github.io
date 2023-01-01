@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>MongoDB on 乾之 三爻</title>
-    <link>https://yokonsan.github.io/tags/mongodb/</link>
+    <link>https://yokonsan.com/tags/mongodb/</link>
     <description>Recent content in MongoDB on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 17 Mar 2018 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Mar 2018 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>对MongoDB的封装</title>
-      <link>https://yokonsan.github.io/posts/2018/3/encapsulation-of-mongodb/</link>
+      <link>https://yokonsan.com/posts/2018/3/encapsulation-of-mongodb/</link>
       <pubDate>Sat, 17 Mar 2018 14:05:37 +0800</pubDate>
       
-      <guid>https://yokonsan.github.io/posts/2018/3/encapsulation-of-mongodb/</guid>
+      <guid>https://yokonsan.com/posts/2018/3/encapsulation-of-mongodb/</guid>
       <description>写爬虫的时候，习惯性会把爬取到的数据存入mongodb。为了方便，也为了每次抓取完数据，不在后面接插入数据的生涩代码。最好的选择是简单的封装mongodb的增删改查功能，如果后面使用mongodb的时</description>
     </item>
     
