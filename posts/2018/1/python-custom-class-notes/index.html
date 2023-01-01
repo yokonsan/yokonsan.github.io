@@ -282,7 +282,7 @@
 </span></span><span class="line"><span class="cl">&gt;&gt;&gt; t[:10]
 </span></span><span class="line"><span class="cl">[0,1,2,3,4,5,6,7,8,9]
 </span></span></code></pre></div><p>当然这只是基础的切片处理，还有很多比如对<code>step</code>参数，负数，做处理。但是这也不难
-看出<code>__getitem__()</code>的强大。对应的是<code>__setitem__()</code>方法，把对象视作 list 或 dict 
+看出<code>__getitem__()</code>的强大。对应的是<code>__setitem__()</code>方法，把对象视作 list 或 dict
 来对集合赋值。最后，还有<code>__delitem__()</code>方法，用于删除某个元素。</p>
 <h2 id="__len__">__len__</h2>
 <p>如果一个类的某个属性是一个集合，如果想要使用<code>len()</code>函数直接获取类的某个属性有多

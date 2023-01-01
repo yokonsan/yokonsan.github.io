@@ -100,7 +100,7 @@
 自己对于网站的更新（更新文章，发布文章，更新站点信息等）操作，我们可以自己控制
 清除对应缓存等待新的缓存，而且管理员不会很频繁的有什么大的更新。游客浏览的信息
 分为频繁更新页面和少有更新页面。</p>
-<p>对于少有信息更新的页面，比如关于，说说还有标签，分类等页，我们可以直接设置 30 
+<p>对于少有信息更新的页面，比如关于，说说还有标签，分类等页，我们可以直接设置 30
 天的缓存期限。但是一旦页面有一些信息的更新，这里比如<code>love me</code>按钮的次数，一旦有
 游客点击（只有不曾点击过的游客才会请求到路由）并且成功请求到<code>love-me</code>路由，就清
 除所有的缓存，再更新新的缓存数据。</p>
@@ -167,7 +167,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="k">def</span> <span class="nf">cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_prefix</span><span class="o">=</span><span class="s1">&#39;view/</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">unless</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">		<span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">            <span class="k">def</span> <span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">                <span class="c1">#: Bypass the cache entirely.</span>
 </span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">unless</span><span class="p">)</span> <span class="ow">and</span> <span class="n">unless</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
@@ -250,7 +250,7 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/page/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">]))</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="n">path</span>
 </span></span></code></pre></div><p><code>request.args.items()</code>返回的是一个什么呢，我们放入路由函数打印出来看看：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">	<span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
 </span></span><span class="line"><span class="cl">	<span class="n">args</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
