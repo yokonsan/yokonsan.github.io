@@ -583,28 +583,28 @@ print('hello world')
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">app</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;首页&#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/index.html&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/tags&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tags&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">tag</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;标签页&#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/tags.html&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/categories&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/categories&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">category</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;分类页&#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="k">pass</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/tag/&lt;tag&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tag/&lt;tag&gt;&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">tag_post</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;tag标签所有文章索引页&#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/</span><span class="si">{tag}</span><span class="s1">.html&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;post&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;post&gt;&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">post</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">	<span class="k">pass</span>
 </span></span><span class="line"><span class="cl">
@@ -643,7 +643,7 @@ print('hello world')
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">admin</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@admin.route</span><span class="p">(</span><span class="s1">&#39;/upload/post&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@admin</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/upload/post&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 </span></span><span class="line"><span class="cl"><span class="nd">@login_required</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">upload_post</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
@@ -665,7 +665,7 @@ print('hello world')
 <p><code>flask</code>的<code>reauest</code>方法接收管理员上传文章，并且保存到存放<code>md</code>文件的文件夹。然后
 调用分装好的<code>Generate</code>类，生成保存并且渲染<code>html</code>页面资源。</p>
 <h2 id="博客api索引">博客api索引</h2>
-<p>如果想要实现<code>restful</code>应用架构，就用到我们保存的<code>blog.dat</code>数据了。使用<code>flask</code>做
+<p>如果想要实现<code>restful</code>应用架构，就用到我们保存的<code>blog.dat</code>数据了。使用<code>flask</code>做 
 api 实在是很简单的，但是我们需要先封装一下载入数据获取索引信息的类：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># utils.py</span>
 </span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">shelve</span>
@@ -722,7 +722,7 @@ api 实在是很简单的，但是我们需要先封装一下载入数据获取�
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/posts&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/posts&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_posts</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s2">    所有文章信息
@@ -731,7 +731,7 @@ api 实在是很简单的，但是我们需要先封装一下载入数据获取�
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">ImportData</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;post_data&#39;</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;int:id&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;int:id&gt;&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_post</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s2">    指定 id 文章信息
@@ -742,7 +742,7 @@ api 实在是很简单的，但是我们需要先封装一下载入数据获取�
 </span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;没有数据&#39;</span><span class="p">})</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/pages&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/pages&#39;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_pages</span><span class="p">():</span>
 </span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s2">    所有页面
