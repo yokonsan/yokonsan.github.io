@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Python爬虫(2):Requests的基本用法 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="虽然Python有内置的urllib库，可以实现网络的请求，但是我并不推荐。因为urllib在很多时候使用起来不方便，比如加一个代理，处理Cookie时API都很繁琐，再比如发送一个POST请求也很麻" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2017/5/python-spider-requests-basic/'>Python爬虫(2):Requests的基本用法</a></h2>
+                        <span class="date">2017.05.29</span>
+                    </div>
+                    <div class="post_content markdown"><p>虽然Python有内置的<code>urllib</code>库，可以实现网络的请求，但是我并不推荐。因为<code>urllib</code>在很多时候使用起来不方便，比如加一个代理，处理<code>Cookie</code>时API都很繁琐，再比如发送一个<code>POST</code>请求也很麻烦。</p>
+<p>而<code>Requests</code>就相当于<code>urllib</code>的升级版本，简化了<code>urllib</code>的使用方法。有了<code>Requests</code>，我们可以用几句代码实现代理的设置，<code>Cookie</code>的设置，非常方便。下面我就给大家整理了<code>Requests</code>库的使用方法和细节。详细可以参考<code>Requests</code><a href="http://docs.python-requests.org/zh_CN/latest/">官方文档</a>。</p>
+<h2 id="什么是requests">什么是Requests？</h2>
+<p><code>Requests</code>是<code>Python</code>语言编写，基于<code>urllib3</code>，采用<code>Apache2 Licensed</code>开源协议的HTTP库。</p>
+<p>它比<code>urllib</code>更加方便，可以节约我们大量的工作，完全满足<code>HTTP</code>测试需求。是<code>Python</code>实现的简单易用的<code>HTTP</code>库。</p>
+<p>安装也很简单：<code>pip install requests</code></p>
+<h2 id="requests的语法操作">Requests的语法操作</h2>
+<h3 id="1实例引入">1.实例引入</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com/&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">)</span>
+</span></span></code></pre></div><p>运行结果：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">200
+</span></span><span class="line"><span class="cl">&lt;class &#39;str&#39;&gt;
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl"># ...HTML网页源码..
+</span></span><span class="line"><span class="cl">&lt;RequestsCookieJar[]&gt;
+</span></span></code></pre></div><p>可以看到，我们非常方便的就获取到了<code>Cookies</code>.</p>
+<h3 id="2各种请求方式">2.各种请求方式</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/get&#39;</span><span class="p">)</span> <span class="c1"># 发送get请求</span>
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/post&#39;</span><span class="p">)</span> <span class="c1"># 发送post请求，只要调用post方法，传入一个url参数</span>
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/put&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/delete&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>官方文档里提供的这个网址足够我们测试这些请求方式了。</p>
+<h2 id="请求">请求</h2>
+<h3 id="1基本get请求">1.基本GET请求</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/get&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span></code></pre></div><p>这个我们前面有使用过，也是最常用的方法。运行成功就可以看到网页的源码了。</p>
+<h3 id="2带参数的get请求">2.带参数的GET请求</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="s1">&#39;jack&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;age&#39;</span> <span class="p">:</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/get&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span></code></pre></div><p>传入参数只需要我们把数据生成一个字典，然后调用<code>params</code>参数，赋值给他就可以，是不是很方便。</p>
+<h3 id="3解析json">3.解析json</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/get&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()))</span>
+</span></span></code></pre></div><p>运行结果：</p>
+<p><img src="/image/post3/post3_1.jpg" alt="post3_1.jpg"></p>
+<p>可以看出<code>Requests</code>的<code>jaon</code>解析和<code>json</code>的<code>loads</code>方法解析出来的结果是完全一样的。所以<code>Requests</code>可以很方便的解析<code>json</code>数据。</p>
+<h3 id="4获取二进制数据">4.获取二进制数据</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com/img/baidu_jgylogo3.gif&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span></code></pre></div><p>运行成功我们可以看到<code>content</code>方法获取的图片页面源码是二进制数据，而<code>text</code>获取的则是字符串代码。显然获取图片这种二进制数据需要使用<code>content</code>方法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;logo.gif&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span></span></code></pre></div><p>这样我们就保存了图片，我们可以在文件夹下看到这张图片。</p>
+<h3 id="5添加headers">5.添加headers</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com&#39;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span></code></pre></div><p>有些网页如果我们直接去请求的话，他会查看请求的对象是不是浏览器，如果没有浏览器信息就会禁止我们爬虫的访问，这个时候我们就要给爬虫加一个<code>headers</code>，加一个浏览器的<code>user-agent</code>信息。这样我们就可以正常访问了。如果有的伙伴不知道怎么得到<code>User-Agent</code>，可以打开浏览器的审查元素，找到<code>network</code>，随便点击一个链接就可以看到<code>User-Agent</code>的信息了。</p>
+<p><img src="/image/post3/post3_2.jpg" alt="post3_2.jpg"></p>
+<h3 id="6基本post请求">6.基本POST请求</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="s1">&#39;jack&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;age&#39;</span> <span class="p">:</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;http://httpbin.org/post&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></span></code></pre></div><p>一个<code>POST</code>必然是要有一个<code>Form Data</code>的表单提交的，我们只要把信息传给<code>data</code>参数就可以了。一个<code>POST</code>请求只需要调用<code>post</code>方法，是不是特别方便呢。如果不觉得方便的话，可以去参考<code>urllib</code>的使用方法。</p>
+<h2 id="响应">响应</h2>
+<h3 id="1response属性">1.response属性</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://www.baidu.com/&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span> <span class="c1"># 状态码</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span> <span class="c1"># 网页源码</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">))</span> <span class="c1"># 头部信息</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">))</span> <span class="c1"># Cookie</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">))</span> <span class="c1"># 请求的url</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">history</span><span class="p">))</span> <span class="c1"># 访问的历史记录</span>
+</span></span></code></pre></div><p>获取这些信息只需要简单的调用就可以实现了。</p>
+<h3 id="2状态码判断">2.状态码判断</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt;import requests
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;response = requests.get(&#39;http://www.baidu.com/&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;exit() if not resp.status_code == 200 else print(&#39;Sucessful&#39;)
+</span></span><span class="line"><span class="cl">Sucessful
+</span></span></code></pre></div><p>如果发送了一个错误请求(一个4XX客户端错误，或者5XX服务器错误响应)，我们可以通过 <code>Response.raise_for_status()</code> 来抛出异常：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt;bad_r = requests.get(&#39;http://httpbin.org/status/404&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;bad_r.status_code
+</span></span><span class="line"><span class="cl">404
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;bad_r.raise_for_status()
+</span></span><span class="line"><span class="cl">Traceback (most recent call last):
+</span></span><span class="line"><span class="cl">  File &#34;requests/models.py&#34;, line 832, in raise_for_status
+</span></span><span class="line"><span class="cl">	raise http_error
+</span></span><span class="line"><span class="cl">requests.exceptions.HTTPError: 404 Client Error
+</span></span></code></pre></div><p>好了，这篇文章我们了解了<code>Requests</code>库的基本语法操作，相信大家对<code>Requests</code>库的请求和响应已经很清楚了，大家完全可以抓取一些网页了。</p>
+<p>纸上得来终觉浅，绝知此事要躬行，大家加油！</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

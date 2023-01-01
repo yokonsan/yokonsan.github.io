@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>flask应用缓存实现的疑惑和答案 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="前言 最近自己一直在折腾站点程序，觉得自己的站点响应速度越来越慢。就想着引入一些缓 存，毕竟这是提高速度最简单的方式了。但是动态博客不像静态博客那样，不需要考虑数 据的更新，全局添加缓存。所以若想加入缓存就" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/2/flask-app-cache-problems-and-answers/'>flask应用缓存实现的疑惑和答案</a></h2>
+                        <span class="date">2018.02.09</span>
+                    </div>
+                    <div class="post_content markdown"><h2 id="前言">前言</h2>
+<p>最近自己一直在折腾站点程序，觉得自己的站点响应速度越来越慢。就想着引入一些缓
+存，毕竟这是提高速度最简单的方式了。但是动态博客不像静态博客那样，不需要考虑数
+据的更新，全局添加缓存。所以若想加入缓存就需要考虑数据的更新问题。</p>
+<p>这里需要分为管理员更新信息和游客浏览信息，管理员更新属于可控的更新，比如管理员
+自己对于网站的更新（更新文章，发布文章，更新站点信息等）操作，我们可以自己控制
+清除对应缓存等待新的缓存，而且管理员不会很频繁的有什么大的更新。游客浏览的信息
+分为频繁更新页面和少有更新页面。</p>
+<p>对于少有信息更新的页面，比如关于，说说还有标签，分类等页，我们可以直接设置 30
+天的缓存期限。但是一旦页面有一些信息的更新，这里比如<code>love me</code>按钮的次数，一旦有
+游客点击（只有不曾点击过的游客才会请求到路由）并且成功请求到<code>love-me</code>路由，就清
+除所有的缓存，再更新新的缓存数据。</p>
+<p>而一些经常更新信息的页面，比如文章页和首页需要更新文章浏览次数，所以不应该使用
+缓存，但是用了缓存后速度确实有很大的提升，所以就给每一篇文章加入5分钟的缓存期
+限。</p>
+<p>其实就本站程序而言，唯一拖慢速度的程序就是<code>app/main/__init__.py</code>文件里定义更新
+全局信息的<code>global_datas</code>函数，而函数返回的信息除了<code>love-me</code>按钮次数外都是管理员
+更新的数据，所以此函数必须添加缓存。</p>
+<h2 id="使用-redis">使用 redis</h2>
+<p>虽然<code>werkzeug</code>库中为我们实现了基础的缓存支持，但是为了方便免去自己封装，我决定
+使用<code>flask-cache</code>插件。 <a href="http://www.pythondoc.com/flask-cache/">插件文档</a></p>
+<p>下面就是给对应的路由添加对应的缓存，这里只要按照文档的来做就可以了。</p>
+<p>由于文档给我们的例子使用的是<code>simple</code>类型，该类型使用的是本地<code>Python</code>字典作为缓
+存的存储，但是这只推荐用于测试开发环境，不推荐用于生产环境。所以我建议使用
+<code>redis</code>类型，使用<code>redis</code>数据库做缓存存储。</p>
+<h3 id="配置-redis">配置 redis</h3>
+<p><code>Windows</code>系统下载地址 <a href="https://github.com/MicrosoftArchive/redis/releases">here</a></p>
+<p>其他系统地址 <a href="https://github.com/antirez/redis/releases">here</a></p>
+<p>安装 <code>redis</code> 操作库：<code>pip install redis</code>。这一步很关键，没了他我们并不能成功的
+使用<code>python</code>操作<code>redis</code>。</p>
+<h3 id="配置-redis-类型信息">配置 redis 类型信息</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="c1"># YuBlog/config.py</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1"># cache 使用 Redis 数据库缓存配置</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CACHE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;redis&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CACHE_REDIS_HOST</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CACHE_REDIS_PORT</span> <span class="o">=</span> <span class="mi">6379</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CACHE_REDIS_DB</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CACHE_REDIS_DB&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">CHCHE_REDIS_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CHCHE_REDIS_PASSWORD&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@staticmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="c1"># YuBlog/app/__init__.py</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask_cache</span> <span class="kn">import</span> <span class="n">Cache</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">create_app</span><span class="p">(</span><span class="n">config_name</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="n">cache</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span></code></pre></div><h2 id="缓存分页疑问">缓存分页疑问</h2>
+<p>添加缓存只需要按照文档的例子，给路由或者函数加对应的装饰器就可以了。</p>
+<p>在给首页加缓存后，点击首页确实速度提升了很多，但是由于首页是分页显示全部内容
+的。当点击第二页和第三页时，发现响应的内容并不是应该出现的内容，而是之前缓存的
+首页也就是第一页的内容。</p>
+<p>这是为什么呢？原因很简单，<code>cache.cached(timeout=None, key_prefix='view/%s', unless=None)</code>装饰器有三个参数：</p>
+<ol>
+<li>timeout: 指的是缓存过期时间，默认永不过期;</li>
+<li>key_prefix: 指缓存项键值的前缀，默认<code>'view/%s'</code>;</li>
+<li>unless: 回调函数，当返回<code>True</code>时，缓存不起作用，默认缓存有效。</li>
+</ol>
+<p>不明白默认的<code>key_prefix</code>具体是什么，而且文档也没有详细的说明，索性看他的源码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">def</span> <span class="nf">cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_prefix</span><span class="o">=</span><span class="s1">&#39;view/</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">unless</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">def</span> <span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">#: Bypass the cache entirely.</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">unless</span><span class="p">)</span> <span class="ow">and</span> <span class="n">unless</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cache_key</span> <span class="o">=</span> <span class="n">decorated_function</span><span class="o">.</span><span class="n">make_cache_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">rv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="n">current_app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">raise</span> <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&#34;Exception possibly due to cache backend.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">rv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">rv</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">rv</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">decorated_function</span><span class="o">.</span><span class="n">cache_timeout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">if</span> <span class="n">current_app</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                            <span class="k">raise</span> <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&#34;Exception possibly due to cache backend.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">rv</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">def</span> <span class="nf">make_cache_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">key_prefix</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="k">elif</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">key_prefix</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+</span></span><span class="line"><span class="cl">                <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">cache_key</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">decorated_function</span><span class="o">.</span><span class="n">uncached</span> <span class="o">=</span> <span class="n">f</span>
+</span></span><span class="line"><span class="cl">            <span class="n">decorated_function</span><span class="o">.</span><span class="n">cache_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+</span></span><span class="line"><span class="cl">            <span class="n">decorated_function</span><span class="o">.</span><span class="n">make_cache_key</span> <span class="o">=</span> <span class="n">make_cache_key</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">decorated_function</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">decorator</span>
+</span></span></code></pre></div><p>这段代码是<code>cache.cached()</code>装饰器核心部分了，我后面的疑问在看完这段代码后就很明
+白了。首先，<code>key_prefix</code>参数以<code>%s</code>作为占位符，用来格式化<code>request.path</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="k">elif</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">key_prefix</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span></code></pre></div><p>那么<code>request.path</code>是什么了，<code>request</code>引自<code>flask</code>库，我们将他放到路由函数中去，
+打印一次就知道了。很显然这是路由<code>url</code>的路径了，首页路径就是<code>/index</code>，归档页就是
+<code>/archives</code>。而上面之所以首页的第二页第三页缓存的内容是一样的，就是因为，他们虽
+然<code>url</code>是<code>/index?page=2</code>和<code>/index?page=3</code>，但是他们的路径是一样的，即：
+<code>/index</code>。装饰器把他们当作是一个缓存项了。</p>
+<h2 id="分页缓存的解决">分页缓存的解决</h2>
+<p>那这种情况如何处理，在我查了一圈网络上的博客后，发现千篇一律不是照搬文档，就是
+稍加改变的文档实例。没有关于这种情况的处理实例，既然文档也没有，那还是得看源
+码。</p>
+<p>其实从上面的源码中我们可以发现，<code>key_prefix</code>参数，不仅可以接收一个字符串，还可
+以接受一个函数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="c1"># 返回缓存 key 的函数</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">make_cache_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">key_prefix</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">key_prefix</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key_prefix</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">cache_key</span>
+</span></span></code></pre></div><p><code>Python</code>的<code>callable()</code>函数检测<code>key_prefix</code>是否是一个可调用函数，如果是，即调用
+函数返回缓存<code>key</code>。</p>
+<p>所以我们只需实现一个函数，使得<code>key_prefix</code>不在只是为路径，还需加上页数信息，这
+样每一页的键值就不一样了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">cache_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    自定义缓存键:
+</span></span></span><span class="line"><span class="cl"><span class="s2">        首页和归档页路由 url 是带参数的分页页数组成：/index?page=2
+</span></span></span><span class="line"><span class="cl"><span class="s2">        flask-cache 缓存的 key_prefix 默认值获取 path ：/index
+</span></span></span><span class="line"><span class="cl"><span class="s2">        需要自定义不同页面的 cache_key : /index/page/2
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+</span></span><span class="line"><span class="cl">    <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/page/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">]))</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="n">path</span>
+</span></span></code></pre></div><p><code>request.args.items()</code>返回的是一个什么呢，我们放入路由函数打印出来看看：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">path</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span>
+</span></span><span class="line"><span class="cl">	<span class="n">args</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="fm">__next__</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span></code></pre></div><p>调用返回：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">/index
+</span></span><span class="line"><span class="cl">&lt;generator object items at 0x000000000626A948&gt;
+</span></span><span class="line"><span class="cl">&lt;class &#39;generator&#39;&gt;
+</span></span><span class="line"><span class="cl">(&#39;page&#39;, &#39;3&#39;)
+</span></span></code></pre></div><p>可见<code>args</code>是一个生成器类型，我们使用生成器的<code>__next__()</code>方法打印他的值,返回的就
+是我们的页数了，我们将他们组成字典方便调用。</p>
+<p>如此我们就解决了分页路由函数的缓存键值相同的问题了，接下来只要将路由函数上的装
+饰器<code>key_prefix</code>参数的值改为函数<code>cache_key</code>就可以了。</p>
+<h2 id="最后">最后</h2>
+<p>对于写一个个人博客，使用<code>flask</code>就感觉恰到好处。如果用<code>django</code>就觉得是在用大炮打
+蚊子，杀鸡用牛刀。但是折腾的劲来了，最求的功能多了，插件库用的多了，<code>flask</code>就变
+得越来越臃肿，没有起初的从容优雅，显得越来越像<code>django</code>。</p>
+<p>其实折腾多了，就会发现，写个博客就为了记录，要太多的功能其实并没有太大的卵用。
+一个简单的静态博客远远满足需求。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/web%E5%BC%80%E5%8F%91/">web开发</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/flask/">flask</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

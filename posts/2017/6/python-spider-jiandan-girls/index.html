@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Python爬虫(6):煎蛋网全站妹子图爬虫 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="上一篇文章中我们抓取了豆瓣图书的数据，如果大家运行成功，并且看到文件夹下的 txt 文件了。是不是有一种刚接触编程，第一次输出Hello world!时的欣喜。和上一篇实践不同，我们这一次来爬取 煎蛋网 全站妹子图" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2017/6/python-spider-jiandan-girls/'>Python爬虫(6):煎蛋网全站妹子图爬虫</a></h2>
+                        <span class="date">2017.06.04</span>
+                    </div>
+                    <div class="post_content markdown"><p>上一篇文章中我们抓取了豆瓣图书的数据，如果大家运行成功，并且看到文件夹下的 txt 文件了。是不是有一种刚接触编程，第一次输出<code>Hello world!</code>时的欣喜。和上一篇实践不同，我们这一次来爬取 <a href="http://jandan.net/ooxx">煎蛋网</a> 全站妹子图，并且保存到指定文件夹下。</p>
+<h2 id="爬取流程">爬取流程</h2>
+<ul>
+<li>从煎蛋网妹子图第一页开始抓取；</li>
+<li>爬取分页标签获得最后一页数字；</li>
+<li>根据最后一页页数，获得所有页<code>URL</code>；</li>
+<li>迭代所有页，对页面所有妹子图片<code>url</code>进行抓取；访问图片<code>URL</code>并且保存图片到文件夹。</li>
+</ul>
+<h2 id="开始">开始</h2>
+<p>通过上一篇文章的爬取过程，我们基本上理解了抓取一个网站的大致流程。因为一个网站虽然有很多页，但是大部分网站每一页的<code>HTML</code>标签内容都是相同的。我们只要获取到一页的内容，就可以获得所有页的内容了。那么开始之前，我们来分析一下煎蛋网妹子图页面的<code>URL</code>。</p>
+<p>第一页的 url：<code>http://jandan.net/ooxx/page-1</code></p>
+<p>第二页：<code>http://jandan.net/ooxx/page-2</code></p>
+<p>最后一页：<code>http://jandan.net/ooxx/page-93</code></p>
+<p>不难发现，煎蛋网的 url 的规律是比较简单的，每一页后面 page 的数字就是几。那么我们可以通过一个循环就可以获得所有的页面 URL 了。但是大家应该想到，这个网站每天都会更新，今天是 93 页，明天就会增加到94页了。如果每一都要爬一次的话，那么每次都要改一下代码页数信息了。这样实现起来虽然可以，但是不免有些愚蠢。</p>
+<p>所以我们需要通过页面的标签信息让程序自己获得页数，我们访问<code>http://jandan.net/ooxx/</code>这个页面时，就相当于我们直接访问了最后一页。大家可以自己试试看。</p>
+<p><img src="/image/post8/post8_1.jpg" alt="post8_1.jpg"></p>
+<p>图中我们可以明确的看到最后一页的数字是94.只要通过这个页面的URL进行抓取就可以得到。我们先获得源码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://jandan.net/ooxx/&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>我们按下<code>f12</code>，从页面源码中找到最后一页 94 所在的标签：</p>
+<p><img src="/image/post8/post8_2.jpg" alt="post8_2.jpg"></p>
+<p>原来 94 就在这个<code>span</code>标签啊。接下来是不是很简单了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获得最高页码数</span>
+</span></span><span class="line"><span class="cl"><span class="n">allpage</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s2">&#34;current-comment-page&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">get_text</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span></code></pre></div><p>由于标签内的 94 边包含一个<code>[]</code>，大家不要以为只是一个<code>list</code>，只要<code>[0]</code>就可以获得的。我们完全可以使用<code>type()</code>,看一下他的属性，就知道它是一个字符串，我们利用切片去掉第一个和最后一个字符，就得到了页数了。
+得到页数后，我们利用循环就可以得到所有页的url了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">urllist</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># for循环迭代出所有页面，得到url</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">allpage</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">allurl</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="s1">&#39;page-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">urllist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allurl</span><span class="p">)</span>
+</span></span></code></pre></div><p>我们把它保存到一个<code>list</code>中。
+那么现在，我们得到所有页面的 url，就可以来获取每一页的内容了。我们以最后一页为例来进行抓取。</p>
+<p><img src="/image/post8/post8_3.jpg" alt="post8_3.jpg"></p>
+<p>我们仍然使用审查元素，找到图片 url 所在的标签。仍然是老方法，获取到页面所有包含图片的<code>img</code>标签：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># css选择器</span>
+</span></span><span class="line"><span class="cl"><span class="n">allimgs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;div.text &amp;gt; p &amp;gt; img&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>只要一行代码，我们就成功获得所有标签了。这里使用了 CSS选择器，大家是否还记得这个方法呢。可以查看之前的文章或者<code>BeautifulSoup</code>的官方文档了解哦。如果大家对 CSS 不是很熟悉，或者根本不知道。也没关系，反正<code>find_all()</code>和<code>find()</code>方法也是可以实现的。不过这里我教大家一个简单的CSS选择器方法。</p>
+<p>我们只要按<code>f12</code>打开浏览器的开发者工具，找到标签的位置，右击标签。就可以看到这个情况：</p>
+<p><img src="/image/post8/post8_4.jpg" alt="post8_4.jpg"></p>
+<p>没错，我们直接<code>Copy selector</code>的内容，粘贴出来就是这样的字符串：<code>#comment-3468457 &gt; div &gt; div &gt; div.text &gt; p &gt; img</code></p>
+<p>我们稍微去掉前面的一些标签，大多数情况下保留到父标签后面的内容就可以了。就是这样：<code>div.text &gt; p &gt; img</code></p>
+<p>我们放到代码中，运行一下就知道是不是成功了。</p>
+<p>结果只一个列表：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[&lt;img onload=&#34;add_img_loading_mask(this, load_sina_gif);&#34; org_src=&#34;//wx4.sinaimg.cn/mw690/6adc108fly1fg90v6vzipg20ak05xqv5.gif&#34; src=&#34;//wx4.sinaimg.cn/thumb180/6adc108fly1fg90v6vzipg20ak05xqv5.gif&#34;/&gt;, &lt;img onload=&#34;add_img_loading_mask(this, load_sina_gif);&#34; org_src=&#34;//wx4.sinaimg.cn/mw690/6adc108fly1fg90qymd8pg20dc0dcnph.gif&#34; src=&#34;//wx4.sinaimg.cn/thumb180/6adc108fly1fg90qymd8pg20dc0dcnph.gif&#34;/&gt;, &lt;img onload=&#34;add_img_loading_mask(this, load_sina_gif);&#34; org_src=&#34;//wx4.sinaimg.cn/mw690/6adc108fly1fg90s98qsbg207e08mu10.gif&#34; src=&#34;//wx4.sinaimg.cn/thumb180/6adc108fly1fg90s98qsbg207e08mu10.gif&#34;/&gt;, &lt;img onload=&#34;add_img_loading_mask(this, load_sina_gif);&#34; org_src=&#34;//wx3.sinaimg.cn/mw690/6adc108fly1fg90v51p5eg20a00dchdv.gif&#34; src=&#34;//wx3.sinaimg.cn/thumb180/6adc108fly1fg90v51p5eg20a00dchdv.gif&#34;/&gt;, &lt;img src=&#34;//wx4.sinaimg.cn/mw600/a1b56627gy1fdb7851js0j20ku4xcx6q.jpg&#34;/&gt;, &lt;img src=&#34;//wx4.sinaimg.cn/mw600/a1b56627gy1fdb78fw14yj20dc46pb2a.jpg&#34;/&gt;, &lt;img src=&#34;//wx3.sinaimg.cn/mw600/a1b56627gy1fdb78hqr1kj20dc1i0x02.jpg&#34;/&gt;, &lt;img src=&#34;//wx4.sinaimg.cn/mw600/a1b56627gy1fdb78ldnwbj20ku3ei4qq.jpg&#34;/&gt;, &lt;img src=&#34;//wx4.sinaimg.cn/mw600/a82b014bly1fg8gkj95toj21kw1kwh3s.jpg&#34;/&gt;, &lt;img src=&#34;//wx4.sinaimg.cn/mw600/a82b014bly1fg8gkhmfraj21kw11xgth.jpg&#34;/&gt;, &lt;img src=&#34;//wx2.sinaimg.cn/mw600/a82b014bly1fg8gklclivj21kw2dc1dg.jpg&#34;/&gt;, &lt;img src=&#34;//wx2.sinaimg.cn/mw600/a82b014bly1fg8eohjekwj21421jkah5.jpg&#34;/&gt;]
+</span></span></code></pre></div><p>很显然，这一页的图片URL都在这里。
+接下来就是提取img标签的src属性了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">urls</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="s1">&#39;src&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 判断url是否完整</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;http:&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">img_url</span> <span class="o">=</span> <span class="n">urls</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">img_url</span> <span class="o">=</span> <span class="s1">&#39;http:&#39;</span> <span class="o">+</span> <span class="n">urls</span>
+</span></span></code></pre></div><p>由于有的标签内<code>url</code>并不完整，所以这里我们进行一次判断。如果不完整就给他补全。</p>
+<p>好了，图片的 url 都获得了，接下来就是保存图片了。大家还记得之前我们介绍<code>Requests</code>模块的时候，有过保存图片的演示。
+因为万维网中每个图片，每个视频都有唯一的 url 指向它们。所以我们只要访问这个 url，并且获得图片的二进制数据，保存到本地就可以了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">imgs</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">img_url</span><span class="err">，</span><span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">filename</span> <span class="o">=</span> <span class="n">img_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 保存图片</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 直接过滤掉保存失败的图片，不终止程序</span>
+</span></span><span class="line"><span class="cl">	<span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">imgs</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sucessful image:&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed:&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+</span></span></code></pre></div><p>大家注意，获取图片二进制数据是<code>.content</code>方法，而不是<code>.text</code>。这里我们有一个错误过滤，因为保存的过程中会有一些文件保存错误的情况，我们直接过滤掉，不终止程序的运行。</p>
+<p>好了，爬虫程序到这里基本上已经全部实现了。但是我们如果把所有的图片存放在一个文件夹中，而且还是代码所在文件夹，不免有些难看。我们可以自己指定他们存放的位置。这里需要用的<code>Python</code>内置的<code>os</code>库了，不清楚的伙伴可以自己查看资料哈。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 创建文件夹的函数，保存到D盘</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># os.path.exists(name)判断是否存在路径</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># os.path.join(path, name)连接目录与文件名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">isExists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 如果不存在</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="ow">not</span> <span class="n">isExists</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;makedir&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 创建文件夹</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 切换到创建的文件夹</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 如果存在了就返回False</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;already exists&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">False</span>
+</span></span></code></pre></div><p>我们只要传给这个函数一个路径参数就可以创建文件夹了。全部的功能都已经实现了，如果不出现以外的话，大家就可以在 d 盘看到这个文件夹了。</p>
+<p><img src="/image/post8/post8_5.jpg" alt="post8_5.jpg"></p>
+<p>如果程序出现错误，可能是我们的程序访问过于频繁，网站封禁了我们的ip。这时，我们就要使用一个代理了。网上免费的代理很多，大家可以自己找，这里简单做一个使用代理的演示。由于是免费ip，不会存活太久就会不能使用，大家不要直接使用代码中的ip。后续可以带着大家一起代建一个自己的代理池。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;111.23.10.27:8080&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># Requests库的get请求</span>
+</span></span><span class="line"><span class="cl">	<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 如果请求被阻，就使用代理</span>
+</span></span><span class="line"><span class="cl">	<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="代码">代码</h2>
+<p>好了，最后上一下完整代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># -*- coding:utf-8 -*-</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  author: yukun</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 发出请求获得HTML源码</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 指定一个浏览器头</span>
+</span></span><span class="line"><span class="cl">	<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 代理，免费的代理只能维持一会可能就没用了，自行更换</span>
+</span></span><span class="line"><span class="cl">	<span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;111.23.10.27:8080&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># Requests库的get请求</span>
+</span></span><span class="line"><span class="cl">		<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 如果请求被阻，就使用代理</span>
+</span></span><span class="line"><span class="cl">		<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">resp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建文件夹的函数，保存到D盘</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># os.path.exists(name)判断是否存在路径</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># os.path.join(path, name)连接目录与文件名</span>
+</span></span><span class="line"><span class="cl">	<span class="n">isExists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 如果不存在</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="ow">not</span> <span class="n">isExists</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;makedir&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 创建文件夹</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 切换到创建的文件夹</span>
+</span></span><span class="line"><span class="cl">		<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;D:\jiandan&#34;</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 如果存在了就返回False</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;already exists&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">False</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 获得图片地址调用download函数进行下载</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_imgs</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 调用函数获得所有页面</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">all_page</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">		<span class="n">path</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 创建文件夹的函数</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 调用请求函数获得HTML源码</span>
+</span></span><span class="line"><span class="cl">		<span class="n">html</span> <span class="o">=</span> <span class="n">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 使用lxml解析器，也可以使用html.parser</span>
+</span></span><span class="line"><span class="cl">		<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># css选择器</span>
+</span></span><span class="line"><span class="cl">		<span class="n">allimgs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;div.text &amp;gt; p &amp;gt; img&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 调用download函数下载保存</span>
+</span></span><span class="line"><span class="cl">		<span class="n">download</span><span class="p">(</span><span class="n">allimgs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 执行完毕打出ok</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 获得所有页面</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">all_page</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;http://jandan.net/ooxx/&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># BeautifulSoup解析页面得到最高页码数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">get_html</span><span class="p">(</span><span class="n">base_url</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 获得最高页码数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">allpage</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s2">&#34;current-comment-page&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">get_text</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="n">urllist</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># for循环迭代出所有页面，得到url</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">allpage</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">allurl</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="s1">&#39;page-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">urllist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">allurl</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">urllist</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 保存图片函数，传入的参数是一页所有图片url集合</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">urls</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="s1">&#39;src&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 判断url是否完整</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;http:&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">img_url</span> <span class="o">=</span> <span class="n">urls</span>
+</span></span><span class="line"><span class="cl">		<span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">img_url</span> <span class="o">=</span> <span class="s1">&#39;http:&#39;</span> <span class="o">+</span> <span class="n">urls</span>
+</span></span><span class="line"><span class="cl">		<span class="n">filename</span> <span class="o">=</span> <span class="n">img_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 保存图片</span>
+</span></span><span class="line"><span class="cl">		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="c1"># 直接过滤掉保存失败的图片，不终止程序</span>
+</span></span><span class="line"><span class="cl">			<span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">get_html</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Sucessful image:&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">except</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Failed:&#39;</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 计时</span>
+</span></span><span class="line"><span class="cl">	<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1"># 调用函数</span>
+</span></span><span class="line"><span class="cl">	<span class="n">get_imgs</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">print</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span>
+</span></span></code></pre></div><p>经过计时，我们只需要146秒就爬取了全站的妹子图片了，大家注意身体。</p>
+<p>谢谢阅读</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

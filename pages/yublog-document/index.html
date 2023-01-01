@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>yublog 文档 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="介绍 YuBlog 是一款功能强大且高度自由的个人博客应用。 安装 下载github文件：here 安装依赖 pip install -r requestments.txt Docker部署 使用docker-compose管理各容器组件，一键部署： 安装Docker 使用官方提供的" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/pages/yublog-document/'>yublog 文档</a></h2>
+                        <span class="date">2017.05.25</span>
+                    </div>
+                    <div class="post_content markdown"><h2 id="介绍">介绍</h2>
+<p>YuBlog 是一款功能强大且高度自由的个人博客应用。</p>
+<h2 id="安装">安装</h2>
+<p>下载<code>github</code>文件：<a href="https://github.com/Blackyukun/YuBlog/archive/master.zip">here</a></p>
+<h3 id="安装依赖">安装依赖</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pip install -r requestments.txt 
+</span></span></code></pre></div><h2 id="docker部署">Docker部署</h2>
+<p>使用<code>docker-compose</code>管理各容器组件，一键部署：</p>
+<h3 id="安装docker">安装Docker</h3>
+<p>使用官方提供的脚本安装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ curl -fsSL get.docker.com -o get-docker.sh
+</span></span><span class="line"><span class="cl">$ sudo sh get-docker.sh --mirror Aliyun
+</span></span></code></pre></div><p>执行<code>$ docker info</code>命令查看安装是否成功。</p>
+<h3 id="安装docker-compose">安装docker-compose：</h3>
+<p><code>Compose</code>项目是 <code>Docker</code> 官方的开源项目，负责实现对 <code>Docker</code> 容器集群的快速编排。从功能上看，跟 <code>OpenStack</code> 中的 <code>Heat</code> 十分类似。由于<code>docker-compose</code>是使用 Python 编写的，可以直接使用<code>pip</code>安装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ pip install docker-compose
+</span></span></code></pre></div><h3 id="启动">启动</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ docker-compose up -d
+</span></span></code></pre></div><p><strong>停止运行：</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ docker-compose down
+</span></span></code></pre></div><p><strong>查看日志：</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ docker-compose logs  <span class="c1"># 查看总的容器日志</span>
+</span></span><span class="line"><span class="cl">$ docker-compose logs web  <span class="c1"># 查看web应用运行日志</span>
+</span></span><span class="line"><span class="cl">$ cat source/app.log  <span class="c1"># 由于我将uwsgi的日志输入到该log文件，可以直接查看</span>
+</span></span></code></pre></div><h2 id="传统部署">传统部署</h2>
+<p>详细部署方案：<a href="http://www.yukunweb.com/2017/12/ubuntu-nginx-uwsgi-flask-app/">here</a></p>
+<h2 id="配置">配置</h2>
+<p>博客运行前需要在<code>config.py</code>中配置必须信息。YuBlog 采用<code>mysql</code>存储，<code>redis</code>做部分缓存，需配置数据库信息。linux 的mysql安装配置可参考上方部署方案。</p>
+<p><code>mysql</code>的配置需根据使用场景选择配置，开发场景配置<code>DevelopmentConfig</code>类中的<code>SQLALCHEMY_DATABASE_URI </code>的信息。同样的生产环境的配置在<code>ProductionConfig</code>类的<code>SQLALCHEMY_DATABASE_URI </code>信息。其中默认的<code>root:password</code>为<code>user：password</code>，<code>@localhost:3306/db</code>为<code>@&lt;host&gt;:&lt;port&gt;/&lt;db-name&gt;</code>。</p>
+<p><code>redis</code>的配置为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 配置类型，可选`simple`不使用 redis 数据库(不推荐)</span>
+</span></span><span class="line"><span class="cl"><span class="n">CACHE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;redis&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">CACHE_REDIS_HOST</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">CACHE_REDIS_PORT</span> <span class="o">=</span> <span class="mi">6379</span>
+</span></span><span class="line"><span class="cl"><span class="n">CACHE_REDIS_DB</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CACHE_REDIS_DB&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">CHCHE_REDIS_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CHCHE_REDIS_PASSWORD&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span></code></pre></div><p>其中私密信息建议使用环境变量的形式配置，如<code>CHCHE_REDIS_PASSWORD</code></p>
+<h3 id="防止csrf攻击配置">防止csrf攻击配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 密钥</span>
+</span></span><span class="line"><span class="cl"><span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s1">&#39;you-guess&#39;</span>
+</span></span></code></pre></div><h3 id="分页条数配置">分页条数配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 每页显示文章条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">POSTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 管理文章页，每页显示条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_POSTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 归档页文章条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">ACHIVES_POSTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 搜索结果页每页条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">SEARCH_POSTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">15</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 文章评论分页，每页条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">COMMENTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 管理评论，每页条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_COMMENTS_PER_PAGE</span> <span class="o">=</span> <span class="mi">50</span>
+</span></span></code></pre></div><h3 id="管理员初始设置">管理员初始设置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 管理员姓名</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_NAME</span> <span class="o">=</span> <span class="s1">&#39;kyu&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 管理员登录信息</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_LOGIN_NAME</span> <span class="o">=</span> <span class="s1">&#39;login-name&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 登录密码</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ADMIN_PASSWORD&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;password&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 博客名</span>
+</span></span><span class="line"><span class="cl"><span class="n">SITE_NAME</span> <span class="o">=</span> <span class="s1">&#39;意外&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 博客标题</span>
+</span></span><span class="line"><span class="cl"><span class="n">SITE_TITLE</span> <span class="o">=</span> <span class="s1">&#39;我的博客&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 管理员简介</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_PROFILE</span> <span class="o">=</span> <span class="s1">&#39;克制力，执行力&#39;</span>
+</span></span></code></pre></div><p>同样的<code>ADMIN_PASSWORD</code>配置建议使用环境变量，初始设置除了登录名和登录密码，可以直接选择默认，可以在管理页面修改。</p>
+<h3 id="站点配置">站点配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># rss 配置</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 站点协议</span>
+</span></span><span class="line"><span class="cl"><span class="n">WEB_PROTOCOL</span> <span class="o">=</span> <span class="s1">&#39;http/https&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 站点域名</span>
+</span></span><span class="line"><span class="cl"><span class="n">WEB_URL</span> <span class="o">=</span> <span class="s1">&#39;domain name&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 站点创建时间</span>
+</span></span><span class="line"><span class="cl"><span class="n">WEB_START_TIME</span> <span class="o">=</span> <span class="s1">&#39;2018-08-18&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 显示条数</span>
+</span></span><span class="line"><span class="cl"><span class="n">RSS_COUNTS</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 发送邮件用户登录</span>
+</span></span><span class="line"><span class="cl"><span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_USERNAME&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 客户端登录密码非正常登录密码</span>
+</span></span><span class="line"><span class="cl"><span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_PASSWORD&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">MAIL_SERVER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_SERVER&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;smtp.qq.com&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">MAIL_PORT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_PORT&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;465&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_MAIL_SUBJECT_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;blog&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_MAIL_SENDER</span> <span class="o">=</span> <span class="s1">&#39;admin.com&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 接收邮件通知的邮箱</span>
+</span></span><span class="line"><span class="cl"><span class="n">ADMIN_MAIL</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ADMIN_MAIL&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 站点搜索的最小字节</span>
+</span></span><span class="line"><span class="cl"><span class="n">WHOOSHEE_MIN_STRING_LEN</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 专题保密文章的密码，建议设置环境变量</span>
+</span></span><span class="line"><span class="cl"><span class="n">ARTICLE_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;ARTICLE_PASSWORD&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;password&#39;</span>
+</span></span></code></pre></div><h3 id="七牛图床配置">七牛图床配置</h3>
+<p>七牛图床是我个人使用，后来发现还很方便的功能，默认不开启。如需使用可将<code>NEED_PIC_BED</code>配置为<code>True</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 七牛云存储配置</span>
+</span></span><span class="line"><span class="cl"><span class="n">NEED_PIC_BED</span> <span class="o">=</span> <span class="kc">False</span>
+</span></span><span class="line"><span class="cl"><span class="n">QN_ACCESS_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;QN_ACCESS_KEY&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">QN_SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;QN_SECRET_KEY&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 七牛空间名</span>
+</span></span><span class="line"><span class="cl"><span class="n">QN_PIC_BUCKET</span> <span class="o">=</span> <span class="s1">&#39;bucket-name&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 七牛外链域名</span>
+</span></span><span class="line"><span class="cl"><span class="n">QN_PIC_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;domain-url&#39;</span>
+</span></span></code></pre></div><h2 id="本地使用">本地使用</h2>
+<p>使用前确认是否开启了mysql，配置了相关信息。</p>
+<ul>
+<li>创建迁移仓库：python manage.py db init；</li>
+<li>创建迁移脚本：python manage.py db migrate -m &ldquo;v1.0&rdquo;；</li>
+<li>更新仓库：python manage.py db upgrade；</li>
+<li>创建管理员信息：python manage.py addAdmin；</li>
+<li>运行程序：python manage.py runserver &ndash;host 0.0.0.0；</li>
+</ul>
+<p>访问地址：<code>http://127.0.0.1:5000</code>
+管理员地址： <code>http://127.0.0.1:5000/admin</code></p>
+<h2 id="生产环境">生产环境</h2>
+<p>如果程序成功部署，启动前需配置环境变量为生产环境：</p>
+<p><code>windows</code>配置：<code>C:\Users\Administrator&gt;set CONFIG=production</code></p>
+<p>&rsquo;linux&rsquo;配置：<code>$ sudo export CONFIG=production</code></p>
+<h2 id="编辑文章">编辑文章</h2>
+<p>后文对网站的编辑操作，只允许有管理员权限的用户操作。</p>
+<p><code>YuBlog</code>支持<code>markdown</code>语法，上传图片可使用七牛图床进行上传获取外链。填写说明：</p>
+<p><img src="/image/document/page-write.png" alt="write"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">分类：技术   # 限制只能写一个分类
+</span></span><span class="line"><span class="cl">标签：docker,nginx  # 标签不限制个数，每个标签之间使用英文的逗号隔开
+</span></span><span class="line"><span class="cl">链接：nginx-and-docker  # 文章的URL，自己可以随意指定，建议有些意义
+</span></span><span class="line"><span class="cl">日期：2018-08-18  # 年月日间需使用-连接
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">标题：nginx和docker  # 文章标题
+</span></span></code></pre></div><p>可以选择保存草稿，待下次编辑，也可以直接发布，当然后续更改也很方便。</p>
+<h2 id="管理文章">管理文章</h2>
+<p>可以对所有发布过的文章进行更新或者删除操作，删除需进一步确认，以防误删。</p>
+<p><img src="/image/document/page-admin_post.png" alt="admin-post"></p>
+<h2 id="审核评论">审核评论</h2>
+<p>为了防止垃圾评论污染，用户的评论一律需要自己审核通过还是删除。</p>
+<h2 id="管理链接">管理链接</h2>
+<p>博客支持添加友情链接和社交链接，他们展示在不同的地方。不要搞错了：</p>
+<p><img src="/image/document/page-add_link.png" alt="add-link"></p>
+<h2 id="添加专题">添加专题</h2>
+<p>博客支持系列专题功能，专栏一般是一类文章的聚合，比如系列教程或者日记啥的，文章可以自行选择加密或者不加密。由于之前的偷懒，文章密码是设置在环境变量的，未来会改进。</p>
+<p><img src="/image/document/page-column.png" alt="column"></p>
+<h2 id="侧栏插件">侧栏插件</h2>
+<p>博客支持自定义的侧栏<code>box</code>插件：</p>
+<p><img src="/image/document/page-box.png" alt="box"></p>
+<p>如果想要保持侧栏固定顶部，需要勾选广告选项。插件支持原生的html,css,js语法。但要保持宽度不得超过父元素，建议不超过230px。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://www.yukunweb.com/static/upload/wenwen.png&#34;</span> <span class="na">target</span><span class="o">=</span><span class="s">&#34;_blank&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://www.yukunweb.com/static/upload/wenwen.png&#34;</span> <span class="na">alt</span><span class="o">=</span><span class="s">&#34;wenwen&#34;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;width:230px;&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>更多的玩法有待考虑。</p>
+<h2 id="上传文件">上传文件</h2>
+<p>由于是个人使用，没有对上传的文件做进一步的过滤操作。建议大家不要随意上传<code>.php</code>、<code>.sh</code>、<code>.py</code>的文件。上传的文件位于静态目录：<code>app/static/upload</code>下，可以使用<code>http://&lt;server-name&gt;/static/upload/&lt;filename&gt;</code>访问。</p>
+<h2 id="七牛图床">七牛图床</h2>
+<p>如需使用七牛图床，需要配置好七牛图床的信息。包括个人的<code>AccessKey/SecretKey</code>：</p>
+<p><img src="/image/document/page-qiniu.png" alt="qiniu"></p>
+<p>默认的外链域名为：</p>
+<p><img src="/image/document/page-qiniu2.png" alt="qiniu2"></p>
+<p>空间名是个人创建的仓库名。</p>
+<p><img src="/image/document/page-qiniu3.png" alt="qiniu3"></p>
+<p>七牛图床主要是为了更方便的管理上传于七牛云的图片，目前支持上传，更名，删除等操作。</p>
+<h2 id="todo">TODO</h2>
+<ul>
+<li>更加美观的页面；</li>
+<li>更加人性化的管理后台；</li>
+<li>优化新评论邮件通知功能；</li>
+<li>七牛图床批量操作功能；</li>
+<li>更自由的专栏文章密码设定；</li>
+<li>改进评论系统；</li>
+<li>other</li>
+</ul>
+<h2 id="最后">最后</h2>
+<p>这是我个人使用的博客应用，开始只是用着感觉不错，后来有很多朋友说喜欢，发邮件和我说用的很麻烦，有很多疑问。这怪我在写的时候只按自己的喜好，没有想过太多，如果可能我会一直保持对他的改进。</p>
+</div>
+                    <div class="post_footer">
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
