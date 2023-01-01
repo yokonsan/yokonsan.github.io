@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 乾之 三爻</title>
+    <link>https://yokonsan.github.io/tags/docker/</link>
+    <description>Recent content in Docker on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 23 Jan 2019 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker入门：核心组件</title>
+      <link>https://yokonsan.github.io/posts/2019/1/docker-core-component/</link>
+      <pubDate>Wed, 23 Jan 2019 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2019/1/docker-core-component/</guid>
+      <description>什么是Docker Docker是一个能够把开发的应用程序自动部署到容器的开源引擎，他设计的目的就是要加强程序员写代码的开发环境和应用部署的生产环境的一致性，降低开发环境的代码在生产环境无法正常执行的风</description>
+    </item>
+    
+  </channel>
+</rss>

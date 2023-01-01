@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web开发 on 乾之 三爻</title>
+    <link>https://yokonsan.github.io/tags/web%E5%BC%80%E5%8F%91/</link>
+    <description>Recent content in web开发 on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 21 Feb 2018 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/web%E5%BC%80%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于flask的静态博客</title>
+      <link>https://yokonsan.github.io/posts/2018/2/static-blog-based-on-flask/</link>
+      <pubDate>Wed, 21 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/static-blog-based-on-flask/</guid>
+      <description>我比较喜欢简单的东西，起初我的博客是很简单的，只有最基础的编辑文章和管理文章。 连评论框都没想去弄，现在想想确实有道理。最近一段时间忙于春节拜年，利用一些琐碎 的时间构思，实现了一个基于 flask 的静态博客。我个</description>
+    </item>
+    
+    <item>
+      <title>flask应用缓存实现的疑惑和答案</title>
+      <link>https://yokonsan.github.io/posts/2018/2/flask-app-cache-problems-and-answers/</link>
+      <pubDate>Fri, 09 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/flask-app-cache-problems-and-answers/</guid>
+      <description>前言 最近自己一直在折腾站点程序，觉得自己的站点响应速度越来越慢。就想着引入一些缓 存，毕竟这是提高速度最简单的方式了。但是动态博客不像静态博客那样，不需要考虑数 据的更新，全局添加缓存。所以若想加入缓存就</description>
+    </item>
+    
+    <item>
+      <title>理解Python的Web开发</title>
+      <link>https://yokonsan.github.io/posts/2018/2/understand-python-web/</link>
+      <pubDate>Thu, 01 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/understand-python-web/</guid>
+      <description>因为python代码的优雅美观且易于维护这一特点，越来越多的人选择使用Python做Web开发。而Python的Web框架百花齐放，目前比较流行的框架有大包大揽的Django，小巧灵活的Flask、B</description>
+    </item>
+    
+  </channel>
+</rss>

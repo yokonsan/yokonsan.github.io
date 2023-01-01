@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>乾之 三爻</title>
+    <link>https://yokonsan.github.io/</link>
+    <description>Recent content on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 11 Feb 2021 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>https://yokonsan.github.io/about/</link>
+      <pubDate>Sun, 01 Jan 2023 14:04:12 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/about/</guid>
+      <description>每个看起来与正常人无异的程序员，其实都是在学习的途中熬过，压抑过，而且创伤过的反社会人士。我是俞坤。这是我的博客网站，记录我的学习路程，技术分享和一些生活感悟。大学时光总是过得很快，转眼就要大四，开始</description>
+    </item>
+    
+    <item>
+      <title>企查查请求头反爬破解</title>
+      <link>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</link>
+      <pubDate>Thu, 11 Feb 2021 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</guid>
+      <description>最近有朋友问我，qcc 网站做了一次反爬措施，要如何破解。 分析 我抓包大致看了下，该模块下的请求为 ajax请求，并且每次请求都会带上一个疑似身份验证的请求头，长这个样子： 首先搜索网页 html 源码，无法得知该信息</description>
+    </item>
+    
+    <item>
+      <title>Docker入门：核心组件</title>
+      <link>https://yokonsan.github.io/posts/2019/1/docker-core-component/</link>
+      <pubDate>Wed, 23 Jan 2019 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2019/1/docker-core-component/</guid>
+      <description>什么是Docker Docker是一个能够把开发的应用程序自动部署到容器的开源引擎，他设计的目的就是要加强程序员写代码的开发环境和应用部署的生产环境的一致性，降低开发环境的代码在生产环境无法正常执行的风</description>
+    </item>
+    
+    <item>
+      <title>读三体</title>
+      <link>https://yokonsan.github.io/posts/2018/8/read-three-body/</link>
+      <pubDate>Tue, 28 Aug 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/8/read-three-body/</guid>
+      <description>最近我用了两个星期读完了刘慈欣的三体三部曲，《地球往事》、《黑暗森林》、《死神永生》。因为是科幻小说，作者从上帝视角，以宏大的时间跨度，去叙述两个文明在宇宙中为了生存，付诸的努力。本文尽量不叙述小说的</description>
+    </item>
+    
+    <item>
+      <title>从contextlib源码谈with语句</title>
+      <link>https://yokonsan.github.io/posts/2018/8/talking-with-from-the-ontextlib-source/</link>
+      <pubDate>Mon, 13 Aug 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/8/talking-with-from-the-ontextlib-source/</guid>
+      <description>上一篇文章中，解决*RuntimeError: Working outside of application context.*错误，使用手动将应用上下文推入栈中： ctx = app.app_context() ctx.push() print(current_app.name) ctx.pop() 而 flask 文档中给我们的解决代码是： with app.app_context(): print(current_app.name) 它使用了python的with语句，使得代码</description>
+    </item>
+    
+    <item>
+      <title>Flask的经典错误</title>
+      <link>https://yokonsan.github.io/posts/2018/7/flask-classic-error/</link>
+      <pubDate>Sun, 29 Jul 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/7/flask-classic-error/</guid>
+      <description>在编写 Flask 应用的单元测试，离线应用时候经常会遇到，*RuntimeError: Working outside of application context.*的报错。这个报错是在没有激活程序上下文情况下，进行了一些程序上下文或请求上下文的操作。先看下面的两</description>
+    </item>
+    
+    <item>
+      <title>Nginx场景实践</title>
+      <link>https://yokonsan.github.io/posts/2018/6/nginx-scene-practice/</link>
+      <pubDate>Sat, 30 Jun 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/6/nginx-scene-practice/</guid>
+      <description>Nginx(读作：恩静 X)是一个高性能的HTTP和反向代理服务器，一个邮件代理以及通用的TCP/ UDP代理服务器。本篇文章是我最近使用Nginx的记录。你发现本站已经是全站https了，而本站的图片是</description>
+    </item>
+    
+    <item>
+      <title>优雅的写判断语句</title>
+      <link>https://yokonsan.github.io/posts/2018/5/write-judgment-sentences-gracefully/</link>
+      <pubDate>Sun, 20 May 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/5/write-judgment-sentences-gracefully/</guid>
+      <description>一个程序之所以能自动做很多任务，是因为我们给他做好了条件判断。项目中，我们难免会使用if/else判断逻辑语句。对简单的情况而言，使用逻辑语句会很清晰简洁，而项目情况一旦复杂，或者判断层次变多，盲目的</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(15):煎蛋网加密处理方式</title>
+      <link>https://yokonsan.github.io/posts/2018/5/jiandan-encryption-processing/</link>
+      <pubDate>Tue, 08 May 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/5/jiandan-encryption-processing/</guid>
+      <description>最近一直有朋友问我改版的煎蛋网妹子图怎么爬，因为他们花费精力结果抓了一整个文件夹的防盗图。我之前在很久以前的一篇博客说过，对于这种js处理的网页，要想抓取到网页上看到的数据，大致有三种方法： Selen</description>
+    </item>
+    
+    <item>
+      <title>分裂</title>
+      <link>https://yokonsan.github.io/posts/2018/4/split-life/</link>
+      <pubDate>Sun, 29 Apr 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/4/split-life/</guid>
+      <description>4月1号那天，网易云下架了周杰伦的音乐，也是那天我在地铁上卸载了这个我使用4年的软件。这个月很多歌火了，前几天室友刷抖音，视频的bgm是一首叫《离人凑》的歌。他觉得好听，就搜出来听。我刚听就觉得熟悉，</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(14):搭建免费异步IP代理池</title>
+      <link>https://yokonsan.github.io/posts/2018/4/build-free-asynchronous-proxy-pool/</link>
+      <pubDate>Sat, 07 Apr 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/4/build-free-asynchronous-proxy-pool/</guid>
+      <description>之前写爬虫的时候，经常遇到被封IP的情况。解决办法是控制爬虫请求的时间，这样效率低很多，而且一般网站都会有ip访问阈值监控，超过访问阈值仍然可能会被封。最直接的办法是更换ip，如果可以建议选择付费的代</description>
+    </item>
+    
+    <item>
+      <title>对MongoDB的封装</title>
+      <link>https://yokonsan.github.io/posts/2018/3/encapsulation-of-mongodb/</link>
+      <pubDate>Sat, 17 Mar 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/3/encapsulation-of-mongodb/</guid>
+      <description>写爬虫的时候，习惯性会把爬取到的数据存入mongodb。为了方便，也为了每次抓取完数据，不在后面接插入数据的生涩代码。最好的选择是简单的封装mongodb的增删改查功能，如果后面使用mongodb的时</description>
+    </item>
+    
+    <item>
+      <title>基于flask的静态博客</title>
+      <link>https://yokonsan.github.io/posts/2018/2/static-blog-based-on-flask/</link>
+      <pubDate>Wed, 21 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/static-blog-based-on-flask/</guid>
+      <description>我比较喜欢简单的东西，起初我的博客是很简单的，只有最基础的编辑文章和管理文章。 连评论框都没想去弄，现在想想确实有道理。最近一段时间忙于春节拜年，利用一些琐碎 的时间构思，实现了一个基于 flask 的静态博客。我个</description>
+    </item>
+    
+    <item>
+      <title>flask应用缓存实现的疑惑和答案</title>
+      <link>https://yokonsan.github.io/posts/2018/2/flask-app-cache-problems-and-answers/</link>
+      <pubDate>Fri, 09 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/flask-app-cache-problems-and-answers/</guid>
+      <description>前言 最近自己一直在折腾站点程序，觉得自己的站点响应速度越来越慢。就想着引入一些缓 存，毕竟这是提高速度最简单的方式了。但是动态博客不像静态博客那样，不需要考虑数 据的更新，全局添加缓存。所以若想加入缓存就</description>
+    </item>
+    
+    <item>
+      <title>理解Python的Web开发</title>
+      <link>https://yokonsan.github.io/posts/2018/2/understand-python-web/</link>
+      <pubDate>Thu, 01 Feb 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/2/understand-python-web/</guid>
+      <description>因为python代码的优雅美观且易于维护这一特点，越来越多的人选择使用Python做Web开发。而Python的Web框架百花齐放，目前比较流行的框架有大包大揽的Django，小巧灵活的Flask、B</description>
+    </item>
+    
+    <item>
+      <title>Python的定制类笔记</title>
+      <link>https://yokonsan.github.io/posts/2018/1/python-custom-class-notes/</link>
+      <pubDate>Sun, 28 Jan 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/1/python-custom-class-notes/</guid>
+      <description>前言 最近在阅读flask源码的时候，经常看到一些python类中，类似于__xxx__的变量和 函数名，这些大多是在python中有特殊用途的。Python的class中有许多类似于这样 的函数，我们用他</description>
+    </item>
+    
+    <item>
+      <title>什么年龄说什么话</title>
+      <link>https://yokonsan.github.io/posts/2018/1/what-age-what-words/</link>
+      <pubDate>Mon, 01 Jan 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/1/what-age-what-words/</guid>
+      <description>有时候安静下来，插上耳机播放自己的歌单，每次放到之前或许是几个月前几年前听的，而最近很少听的歌时，总会很有感触。好比现在我正听到朴树唱到：“人随风飘荡，天各自一方”，我就想到7月份暑假的时候，天气很热</description>
+    </item>
+    
+    <item>
+      <title>可视化分钱的概率模拟算法</title>
+      <link>https://yokonsan.github.io/posts/2017/12/visualization-money-algorithm-imitate/</link>
+      <pubDate>Mon, 18 Dec 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/12/visualization-money-algorithm-imitate/</guid>
+      <description>介绍 之前在一篇文章上看到一个问题，说：“一个房间里有100个人，没人有100块钱，每分 钟每人随机给另外的人一块钱，那么过一段时间后，这100个人的财富分布是什么情 况？”。如果按照个人的常规直觉，无论过</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu&#43;uwsgi&#43;Nginx部署Flask应用</title>
+      <link>https://yokonsan.github.io/posts/2017/12/ubuntu-nginx-uwsgi-flask-app/</link>
+      <pubDate>Tue, 12 Dec 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/12/ubuntu-nginx-uwsgi-flask-app/</guid>
+      <description>由于是第一次在Linux部署Python应用，过程中遇到很多坑，也找了很多部署博客的分享。再一次体会到好文章带你上天堂，坏文章带你瞎逼忙的道理。索性就记录这次部署的全过程，供以后参考。 介绍 首先先介绍下</description>
+    </item>
+    
+    <item>
+      <title>Flask不渲染显示sitemap.xml</title>
+      <link>https://yokonsan.github.io/posts/2017/12/flask-web-sitemap/</link>
+      <pubDate>Mon, 11 Dec 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/12/flask-web-sitemap/</guid>
+      <description>嫌弃Wordprcess笨重速度慢，而且不支持markdown语法，就用hexo驱动做静态博客。又觉得hexo麻烦，不是很喜欢，就想着全凭自己的喜好来做一个功能齐全的博客网站，于是就有了这个小站。使用</description>
+    </item>
+    
+    <item>
+      <title>Vue入门实例</title>
+      <link>https://yokonsan.github.io/posts/2017/10/vue-instance/</link>
+      <pubDate>Sun, 08 Oct 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/10/vue-instance/</guid>
+      <description>最近React框架的一些问题，基本上大多React使用者都停止使用。无疑Vue将会更加受人欢迎。 项目准备 对于不清楚Vue是什么或者不知道如何使用的伙伴可以自行参考Vue 文档。 安装Vue最简单的方法就是</description>
+    </item>
+    
+    <item>
+      <title>雨下一整晚</title>
+      <link>https://yokonsan.github.io/posts/2017/9/rained-all-night/</link>
+      <pubDate>Sat, 23 Sep 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/9/rained-all-night/</guid>
+      <description>我喜欢下雨后街道上弥漫的桂花香味，那种潮湿的微风带来的气味，仿佛身处和初恋走过的那条上学的街道上。 然而时光辗转，桂花的香味仍然迷人，初恋的面貌早已模糊。只记得她有很长的头发，喜欢穿亮颜色的衣服，笑起来</description>
+    </item>
+    
+    <item>
+      <title>八月</title>
+      <link>https://yokonsan.github.io/posts/2017/8/august-things/</link>
+      <pubDate>Sun, 27 Aug 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/8/august-things/</guid>
+      <description>今天是八月二十七号，还有四天这个月就结束了。当然八月的离去，就是九月的到来。 这个月发生了很多事，吴京的《战狼2》火了，炉石传说出冰冠堡垒了，著名的电影公司暴雪又出新CG了，郭敬明也开始蠢蠢欲动了&amp;he</description>
+    </item>
+    
+    <item>
+      <title>我看小说的时候我在看什么</title>
+      <link>https://yokonsan.github.io/posts/2017/8/what-looking-when-read-novels/</link>
+      <pubDate>Wed, 02 Aug 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/8/what-looking-when-read-novels/</guid>
+      <description>最近无聊的时候逛知乎收到几个伙伴的私信，是我之前在专栏写的一个小说网站的代码不能用了。由于我之前说过不在更新那个项目了，所以我也没想去改，我知道大部分原因是爬虫抓取的小说网站更新了，爬虫代码用不了了。</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(12):Scrapy组件的用法</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-component/</link>
+      <pubDate>Sat, 29 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-component/</guid>
+      <description>大家好，点开文章大家应该可以听到一曲大气恢弘的音乐，仿佛置身于江湖中，而自己是一名行侠仗义的侠客。见多了江湖的纷扰，你早已经累了，功名利禄对你来说不如一壶好酒。你骑马田间，而这时已是傍晚时分，起风了，</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(13):Scrapy实战抓取网易云音乐</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-163music/</link>
+      <pubDate>Sat, 29 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-163music/</guid>
+      <description>前两篇文章我们了解了 Scrapy 的理论知识，那么我们不能做纸上谈兵的赵括。实践才是检验真理的唯一标准。本篇文章我们来抓取网易云音乐的所有音乐及音乐的热评。 分析站点 我们打开浏览器，访问网易云音乐的网页端。如果我们</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(11):Scrapy框架的安装和基本使用</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-install-and-basic/</link>
+      <pubDate>Thu, 27 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-install-and-basic/</guid>
+      <description>大家好，本篇文章我们来看一下强大的Python爬虫框架Scrapy。Scrapy是一个使用简单，功能强大的异步爬虫框架，我们先来看看他的安装。 Scrapy的安装 Scrapy的安装是很麻烦的，对于一些想</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(10):Selenium&#43;PhantomJS基本操作</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-selenium-phantomjs-basic/</link>
+      <pubDate>Wed, 26 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-selenium-phantomjs-basic/</guid>
+      <description>大家好，这篇文章我们来看一下Selenium库结合PhantomJs，Chrome等一些浏览器的操作。那么我们在之前的文章中，有提到过Selenium库和PhantomJ，说他们结合使用是万能的利器。</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(9):Cookie介绍和模拟登录</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-cookie/</link>
+      <pubDate>Fri, 21 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-cookie/</guid>
+      <description>大家好，这篇文章我们来看一下Cookie是什么，和他的一些用法。 什么是Cookie？ 在计算机术语中是指一种能够让网站服务器把少量数据储存到客户端的硬盘或内存，或是从客户端的硬盘读取数据的一种技术。 先看</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(8):分析Ajax请求爬取果壳网</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-ajax-guoke/</link>
+      <pubDate>Mon, 17 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-ajax-guoke/</guid>
+      <description>本篇文章我们来研究一下怎么分析网页的Ajax请求。 我们在平时爬取网页的时候，可能都遇到过有些网页直接请求得到的 HTML 代码里面，并没有我们需要的数据，也就是我们在浏览器中看到的内容。 这就是因为这些信息是通过</description>
+    </item>
+    
+    <item>
+      <title>一切都会好的</title>
+      <link>https://yokonsan.github.io/posts/2017/7/everything-is-going-to-be-okay/</link>
+      <pubDate>Wed, 12 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/everything-is-going-to-be-okay/</guid>
+      <description>博客好久没更新了，但是最近真的有很多话想说，但是又不知如何表达才显得自然。虽然有时候会想反正也没有几个人看，但是话到键盘上，又不知该说什么。这种只可让人意会，而不可言传的感觉真是憋人。 我的大三在十天前</description>
+    </item>
+    
+    <item>
+      <title>忙忙碌碌</title>
+      <link>https://yokonsan.github.io/posts/2017/6/busy-life/</link>
+      <pubDate>Tue, 20 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/busy-life/</guid>
+      <description>临近学期末，各项考试也陆陆续续开始了。忙完这门课的作业，接着忙那门课的复习。可是忙不单行，科目二考试就定在6月19日，两边都很是考试，只忙一边，另一边肯定会生变故。如果两边一起忙，那是必然不可能的。 因</description>
+    </item>
+    
+    <item>
+      <title>返老还童</title>
+      <link>https://yokonsan.github.io/posts/2017/6/rejuvenation-reviews/</link>
+      <pubDate>Thu, 15 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/rejuvenation-reviews/</guid>
+      <description>昨天晚上在知乎上看到 你听过最有力量的台词有哪些？ 看了第一条回答，就很喜欢这句台词，于是找了这部电影，静静的看了一下午。影片名《本杰明.巴顿奇事》，又叫《返老还童》。 “一件事无论太晚或者对于我来说太早，</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(7):多进程抓取拉钩网十万数据</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-crawl-data-multiprocess/</link>
+      <pubDate>Mon, 12 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-crawl-data-multiprocess/</guid>
+      <description>由于拉钩网页面做了一些更新，之前的程序无法正常工作，本篇文章做一次更新。只更新一些程序和一些程序的实现方法。由于没有仔细修改，可能前后语言不通顺，大家谅解。 大家好，几天没有更新了。相信大家经过前两篇的</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(6):煎蛋网全站妹子图爬虫</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-jiandan-girls/</link>
+      <pubDate>Sun, 04 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-jiandan-girls/</guid>
+      <description>上一篇文章中我们抓取了豆瓣图书的数据，如果大家运行成功，并且看到文件夹下的 txt 文件了。是不是有一种刚接触编程，第一次输出Hello world!时的欣喜。和上一篇实践不同，我们这一次来爬取 煎蛋网 全站妹子图</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(5):豆瓣读书练手爬虫</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-douban/</link>
+      <pubDate>Sat, 03 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-douban/</guid>
+      <description>我们在之前的文章中基本上掌握了Python爬虫的原理和方法，不知道大家有没有练习呢。今天我就来找一个简单的网页进行爬取，就当是给之前的兵书做一个实践。不然不就是纸上谈兵的赵括了吗。 好了，我们这次的目标</description>
+    </item>
+    
+    <item>
+      <title>行走世间都是妖怪</title>
+      <link>https://yokonsan.github.io/posts/2017/6/walking-world-is-monster/</link>
+      <pubDate>Fri, 02 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/walking-world-is-monster/</guid>
+      <description>热的时候喊热是无济于事的。顶着火红的太阳，看着姗姗来迟的 138 路公交，无奈的翻翻白眼。 南京的天气一如既往的热，由于科目二考试将至，连安静呆在宿舍的想法都无法满足。不过年轻人就是应该多出来走走，不然就无法看</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(4):Beautiful Soup的常用方法</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-beautifulsoup-basic/</link>
+      <pubDate>Thu, 01 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-beautifulsoup-basic/</guid>
+      <description>Requests库的用法大家肯定已经熟练掌握了，但是当我们使用Requests获取到网页的 HTML 代码信息后，我们要怎样才能抓取到我们想要的信息呢？我相信大家肯定尝试过很多办法，比如字符串的 find 方法，还有高级</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(2):Requests的基本用法</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-requests-basic/</link>
+      <pubDate>Mon, 29 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-requests-basic/</guid>
+      <description>虽然Python有内置的urllib库，可以实现网络的请求，但是我并不推荐。因为urllib在很多时候使用起来不方便，比如加一个代理，处理Cookie时API都很繁琐，再比如发送一个POST请求也很麻</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(3):Requests的高级用法</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-requests-advanced-usage/</link>
+      <pubDate>Mon, 29 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-requests-advanced-usage/</guid>
+      <description>上一篇文章我们整理了Requests库的基本用法，相信大家已经经过爬取一些简单网页的练习，已经很熟练了。 这一篇文章我们来 看一下Requests库的高级操作。 高级操作 1.文件上传 import requests files = {&amp;#39;file&amp;#39; : open(&amp;#39;logo.gif&amp;#39;,&amp;#39;rb&amp;#39;)} resp = requests.post(&amp;#39;http://httpbin.org/post&amp;#39;, files=files) print(resp.text)</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(1):基本原理</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-basic/</link>
+      <pubDate>Sun, 28 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-basic/</guid>
+      <description>大家好，今天周末，希望大家周末愉快。 这篇文章我来梳理一下爬虫的基本原理。用过Python的伙伴都知道Python用来写爬虫是件很简单很爽的事情。但是有些伙伴不了解爬虫到底是什么，会纳闷为什么爬虫要设置</description>
+    </item>
+    
+    <item>
+      <title>yublog 文档</title>
+      <link>https://yokonsan.github.io/pages/yublog-document/</link>
+      <pubDate>Thu, 25 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/pages/yublog-document/</guid>
+      <description>介绍 YuBlog 是一款功能强大且高度自由的个人博客应用。 安装 下载github文件：here 安装依赖 pip install -r requestments.txt Docker部署 使用docker-compose管理各容器组件，一键部署： 安装Docker 使用官方提供的</description>
+    </item>
+    
+    <item>
+      <title>五月的事</title>
+      <link>https://yokonsan.github.io/posts/2017/5/may-things/</link>
+      <pubDate>Thu, 25 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/may-things/</guid>
+      <description>之前无聊的时候写过很多博客，但是那时候这个网站还没有上线，大多博客都写在知乎上。但是一些牢骚话自然不会发在知乎的，都是保存了草稿，然后自己删掉，发布的都是 Python 的分享。毕竟申请的是 Python 专栏，专栏地址。其实这</description>
+    </item>
+    
+  </channel>
+</rss>

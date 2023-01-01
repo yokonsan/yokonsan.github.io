@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>爬虫 on 乾之 三爻</title>
+    <link>https://yokonsan.github.io/tags/%E7%88%AC%E8%99%AB/</link>
+    <description>Recent content in 爬虫 on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 11 Feb 2021 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/%E7%88%AC%E8%99%AB/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>企查查请求头反爬破解</title>
+      <link>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</link>
+      <pubDate>Thu, 11 Feb 2021 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2021/2/qcc-header-sign/</guid>
+      <description>最近有朋友问我，qcc 网站做了一次反爬措施，要如何破解。 分析 我抓包大致看了下，该模块下的请求为 ajax请求，并且每次请求都会带上一个疑似身份验证的请求头，长这个样子： 首先搜索网页 html 源码，无法得知该信息</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(15):煎蛋网加密处理方式</title>
+      <link>https://yokonsan.github.io/posts/2018/5/jiandan-encryption-processing/</link>
+      <pubDate>Tue, 08 May 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/5/jiandan-encryption-processing/</guid>
+      <description>最近一直有朋友问我改版的煎蛋网妹子图怎么爬，因为他们花费精力结果抓了一整个文件夹的防盗图。我之前在很久以前的一篇博客说过，对于这种js处理的网页，要想抓取到网页上看到的数据，大致有三种方法： Selen</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(14):搭建免费异步IP代理池</title>
+      <link>https://yokonsan.github.io/posts/2018/4/build-free-asynchronous-proxy-pool/</link>
+      <pubDate>Sat, 07 Apr 2018 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2018/4/build-free-asynchronous-proxy-pool/</guid>
+      <description>之前写爬虫的时候，经常遇到被封IP的情况。解决办法是控制爬虫请求的时间，这样效率低很多，而且一般网站都会有ip访问阈值监控，超过访问阈值仍然可能会被封。最直接的办法是更换ip，如果可以建议选择付费的代</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(12):Scrapy组件的用法</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-component/</link>
+      <pubDate>Sat, 29 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-component/</guid>
+      <description>大家好，点开文章大家应该可以听到一曲大气恢弘的音乐，仿佛置身于江湖中，而自己是一名行侠仗义的侠客。见多了江湖的纷扰，你早已经累了，功名利禄对你来说不如一壶好酒。你骑马田间，而这时已是傍晚时分，起风了，</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(13):Scrapy实战抓取网易云音乐</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-163music/</link>
+      <pubDate>Sat, 29 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-163music/</guid>
+      <description>前两篇文章我们了解了 Scrapy 的理论知识，那么我们不能做纸上谈兵的赵括。实践才是检验真理的唯一标准。本篇文章我们来抓取网易云音乐的所有音乐及音乐的热评。 分析站点 我们打开浏览器，访问网易云音乐的网页端。如果我们</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(11):Scrapy框架的安装和基本使用</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-install-and-basic/</link>
+      <pubDate>Thu, 27 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-scrapy-install-and-basic/</guid>
+      <description>大家好，本篇文章我们来看一下强大的Python爬虫框架Scrapy。Scrapy是一个使用简单，功能强大的异步爬虫框架，我们先来看看他的安装。 Scrapy的安装 Scrapy的安装是很麻烦的，对于一些想</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(10):Selenium&#43;PhantomJS基本操作</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-selenium-phantomjs-basic/</link>
+      <pubDate>Wed, 26 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-selenium-phantomjs-basic/</guid>
+      <description>大家好，这篇文章我们来看一下Selenium库结合PhantomJs，Chrome等一些浏览器的操作。那么我们在之前的文章中，有提到过Selenium库和PhantomJ，说他们结合使用是万能的利器。</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(9):Cookie介绍和模拟登录</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-cookie/</link>
+      <pubDate>Fri, 21 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-cookie/</guid>
+      <description>大家好，这篇文章我们来看一下Cookie是什么，和他的一些用法。 什么是Cookie？ 在计算机术语中是指一种能够让网站服务器把少量数据储存到客户端的硬盘或内存，或是从客户端的硬盘读取数据的一种技术。 先看</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(8):分析Ajax请求爬取果壳网</title>
+      <link>https://yokonsan.github.io/posts/2017/7/python-spider-ajax-guoke/</link>
+      <pubDate>Mon, 17 Jul 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/7/python-spider-ajax-guoke/</guid>
+      <description>本篇文章我们来研究一下怎么分析网页的Ajax请求。 我们在平时爬取网页的时候，可能都遇到过有些网页直接请求得到的 HTML 代码里面，并没有我们需要的数据，也就是我们在浏览器中看到的内容。 这就是因为这些信息是通过</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(7):多进程抓取拉钩网十万数据</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-crawl-data-multiprocess/</link>
+      <pubDate>Mon, 12 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-crawl-data-multiprocess/</guid>
+      <description>由于拉钩网页面做了一些更新，之前的程序无法正常工作，本篇文章做一次更新。只更新一些程序和一些程序的实现方法。由于没有仔细修改，可能前后语言不通顺，大家谅解。 大家好，几天没有更新了。相信大家经过前两篇的</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(6):煎蛋网全站妹子图爬虫</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-jiandan-girls/</link>
+      <pubDate>Sun, 04 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-jiandan-girls/</guid>
+      <description>上一篇文章中我们抓取了豆瓣图书的数据，如果大家运行成功，并且看到文件夹下的 txt 文件了。是不是有一种刚接触编程，第一次输出Hello world!时的欣喜。和上一篇实践不同，我们这一次来爬取 煎蛋网 全站妹子图</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(5):豆瓣读书练手爬虫</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-douban/</link>
+      <pubDate>Sat, 03 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-douban/</guid>
+      <description>我们在之前的文章中基本上掌握了Python爬虫的原理和方法，不知道大家有没有练习呢。今天我就来找一个简单的网页进行爬取，就当是给之前的兵书做一个实践。不然不就是纸上谈兵的赵括了吗。 好了，我们这次的目标</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(4):Beautiful Soup的常用方法</title>
+      <link>https://yokonsan.github.io/posts/2017/6/python-spider-beautifulsoup-basic/</link>
+      <pubDate>Thu, 01 Jun 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/6/python-spider-beautifulsoup-basic/</guid>
+      <description>Requests库的用法大家肯定已经熟练掌握了，但是当我们使用Requests获取到网页的 HTML 代码信息后，我们要怎样才能抓取到我们想要的信息呢？我相信大家肯定尝试过很多办法，比如字符串的 find 方法，还有高级</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(2):Requests的基本用法</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-requests-basic/</link>
+      <pubDate>Mon, 29 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-requests-basic/</guid>
+      <description>虽然Python有内置的urllib库，可以实现网络的请求，但是我并不推荐。因为urllib在很多时候使用起来不方便，比如加一个代理，处理Cookie时API都很繁琐，再比如发送一个POST请求也很麻</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(3):Requests的高级用法</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-requests-advanced-usage/</link>
+      <pubDate>Mon, 29 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-requests-advanced-usage/</guid>
+      <description>上一篇文章我们整理了Requests库的基本用法，相信大家已经经过爬取一些简单网页的练习，已经很熟练了。 这一篇文章我们来 看一下Requests库的高级操作。 高级操作 1.文件上传 import requests files = {&amp;#39;file&amp;#39; : open(&amp;#39;logo.gif&amp;#39;,&amp;#39;rb&amp;#39;)} resp = requests.post(&amp;#39;http://httpbin.org/post&amp;#39;, files=files) print(resp.text)</description>
+    </item>
+    
+    <item>
+      <title>Python爬虫(1):基本原理</title>
+      <link>https://yokonsan.github.io/posts/2017/5/python-spider-basic/</link>
+      <pubDate>Sun, 28 May 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/5/python-spider-basic/</guid>
+      <description>大家好，今天周末，希望大家周末愉快。 这篇文章我来梳理一下爬虫的基本原理。用过Python的伙伴都知道Python用来写爬虫是件很简单很爽的事情。但是有些伙伴不了解爬虫到底是什么，会纳闷为什么爬虫要设置</description>
+    </item>
+    
+  </channel>
+</rss>

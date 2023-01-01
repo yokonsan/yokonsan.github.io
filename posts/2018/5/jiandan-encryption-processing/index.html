@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Python爬虫(15):煎蛋网加密处理方式 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="最近一直有朋友问我改版的煎蛋网妹子图怎么爬，因为他们花费精力结果抓了一整个文件夹的防盗图。我之前在很久以前的一篇博客说过，对于这种js处理的网页，要想抓取到网页上看到的数据，大致有三种方法： Selen" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.github.io/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.github.io/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.github.io/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/5/jiandan-encryption-processing/'>Python爬虫(15):煎蛋网加密处理方式</a></h2>
+                        <span class="date">2018.05.08</span>
+                    </div>
+                    <div class="post_content markdown"><p>最近一直有朋友问我改版的煎蛋网妹子图怎么爬，因为他们花费精力结果抓了一整个文件夹的防盗图。我之前在很久以前的一篇博客说过，对于这种js处理的网页，要想抓取到网页上看到的数据，大致有三种方法：</p>
+<ul>
+<li>Selenium结合浏览器驱动，直接获取加载js后的页面，解析数据。这种方法最为简单粗暴，不过速度会慢一点，处理煎蛋这样的网页有点大材小用；</li>
+<li>直接使用python执行js文件，幸运的是PyV8库很符合要求，不过PyV8似乎不支持python3，python3可以使用PyExecJS库。这种方法也很简单，不过如果执行的js文件依赖pquery库的话，比较麻烦；</li>
+<li>用python模拟js加密方式，拿到加密处理后的数据，这种方法就是本篇主要讨论的内容，优点是依赖少速度快，缺点是如果煎蛋加密方式改了，需要跟着改。</li>
+</ul>
+<h2 id="分析网页">分析网页</h2>
+<p><img src="/image/post34/post34_1.png" alt="post34_1.png"></p>
+<p>首先打开审查元素看他的实际响应内容，可以看到img标签中实际<code>src</code>属性的值是一个固定的值<code>//img.jandan.net/img/blank.gif</code>。而onload属性指向的是一个js的<code>jandan_load_img()</code>函数，<code>this</code>参数大多数情况是指的当前标签。后面接着span标签包含的一串hash值。</p>
+<p>目前我们找到了<code>jandan_load_img()</code>函数，接着就是确定包含这个函数的js文件。方法很简单，在每一个返回的js响应中，去搜索。</p>
+<p><img src="/image/post34/post34_2.png" alt="post34_2.png"></p>
+<p>目前的js文件是经过压缩混淆过的，我们可以复制放到线上解压工具里解压。如果用的是Chrome，可以找到source文件，点击如下图标红框的按钮：</p>
+<p><img src="/image/post34/post34_3.png" alt="post34_3.png"></p>
+<p><code>jandan_load_img()</code>函数内容为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">jandan_load_img</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="s2">&#34;span.img-hash&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">f</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">jdXFKzuIDxRVqKYQfswJ5elNfow1x0JrJH</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="s2">&#34;zE4N6eHuAQP8vkQPb0wcuEcWnLzHYVhy&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;a href=&#34;&#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\/\/\w+\.sinaimg\.cn\/)(\w+)(\/.+\.(gif|jpg|jpeg))/</span><span class="p">,</span> <span class="s2">&#34;$1large$3&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#34; target=&#34;_blank&#34; class=&#34;view_img_link&#34;&gt;[查看原图]&lt;/a&gt;&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">d</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">d</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="s2">&#34;&lt;br&gt;&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">d</span><span class="p">.</span><span class="nx">removeAttr</span><span class="p">(</span><span class="s2">&#34;onload&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">d</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&#34;src&#34;</span><span class="p">,</span> <span class="nx">location</span><span class="p">.</span><span class="nx">protocol</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(\/\/\w+\.sinaimg\.cn\/)(\w+)(\/.+\.gif)/</span><span class="p">,</span> <span class="s2">&#34;$1thumb180$3&#34;</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>可以看到js文件依赖PQuery库，它拿到img标签，接着拿到后面的span标签内容，然后将它和一个常量传给一串字符的这个函数，拿到这个一串字符的函数返回的内容，放到img和a标签中。</p>
+<p>我们在当前js文件搜索是否有这个<code>jdXFKzuIDxRVqKYQfswJ5elNfow1x0JrJH()</code>函数，如果不出意外的话，可以搜索到2个函数。我们选择后面一个，内容如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">jdXFKzuIDxRVqKYQfswJ5elNfow1x0JrJH</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="s2">&#34;DECODE&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nx">r</span> <span class="o">?</span> <span class="nx">r</span> <span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">d</span> <span class="o">?</span> <span class="nx">d</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">=</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">r</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">==</span> <span class="s2">&#34;DECODE&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">q</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">+</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">o</span> <span class="o">+</span> <span class="nx">l</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">==</span> <span class="s2">&#34;DECODE&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">m</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">q</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">k</span> <span class="o">=</span> <span class="nx">base64_decode</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">h</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">g</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="nx">g</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">h</span><span class="p">[</span><span class="nx">g</span><span class="p">]</span> <span class="o">=</span> <span class="nx">g</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">g</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="nx">g</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">b</span><span class="p">[</span><span class="nx">g</span><span class="p">]</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(</span><span class="nx">g</span> <span class="o">%</span> <span class="nx">c</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">g</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="nx">g</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="nx">f</span> <span class="o">+</span> <span class="nx">h</span><span class="p">[</span><span class="nx">g</span><span class="p">]</span> <span class="o">+</span> <span class="nx">b</span><span class="p">[</span><span class="nx">g</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">g</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">h</span><span class="p">[</span><span class="nx">g</span><span class="p">]</span> <span class="o">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">f</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">h</span><span class="p">[</span><span class="nx">f</span><span class="p">]</span> <span class="o">=</span> <span class="nx">tmp</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">k</span> <span class="o">=</span> <span class="nx">k</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34;&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">g</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">g</span> <span class="o">&lt;</span> <span class="nx">k</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">g</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">p</span> <span class="o">=</span> <span class="p">(</span><span class="nx">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">256</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="nx">f</span> <span class="o">+</span> <span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">h</span><span class="p">[</span><span class="nx">f</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">h</span><span class="p">[</span><span class="nx">f</span><span class="p">]</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="o">+=</span> <span class="nx">chr</span><span class="p">(</span><span class="nx">ord</span><span class="p">(</span><span class="nx">k</span><span class="p">[</span><span class="nx">g</span><span class="p">])</span> <span class="o">^</span> <span class="p">(</span><span class="nx">h</span><span class="p">[(</span><span class="nx">h</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">+</span> <span class="nx">h</span><span class="p">[</span><span class="nx">f</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">==</span> <span class="s2">&#34;DECODE&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-</span> <span class="nx">time</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="o">==</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="o">+</span> <span class="nx">n</span><span class="p">).</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">t</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">t</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>拿到这段返回正确url的js代码，我们只要用python语言翻译过来就可以了。</p>
+<h2 id="抓取思路">抓取思路</h2>
+<ol>
+<li>请求网页拿到html；</li>
+<li>从网页中解析出所有img标签后span标签包含的hash值；</li>
+<li>正则匹配到html中对应js文件url，请求得到js代码；</li>
+<li>正则匹配到js中<code>jandan_load_img()</code>传递给解密函数的常量；</li>
+<li>将hash值和常量传递给解密函数，返回对应图片url；</li>
+<li>下载图片。</li>
+</ol>
+<h2 id="翻译js函数">翻译js函数</h2>
+<p>对面上面的步骤，我不做多余描述，主要说一下对js代码的翻译，后面会放整理后的代码地址。</p>
+<p>如果要翻译上面的js代码，只需要搞清楚代码中调用的函数对应python什么函数就可以了，没有什么难点。</p>
+<p><code>md5()</code>是对<code>md5.js</code>的<code>hex_md5()</code>加密方式的封装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">md5</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">hex_md5</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这个方法就相当于python的hashlib库提供的md5摘要加密算法。感兴趣的朋友自行了解，由于后面多次调用此方法，我们对它进行一个封装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">md5</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">md5</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">md5</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span></span></code></pre></div><p>js中的<code>r.substr(0, 16)</code>调用的是<code>stringObject.substr(start,length)</code>函数。<code>substr()</code>方法可在字符串中抽取从<code>start</code>下标开始的指定<code>length</code>数目的字符。这里注意的是<code>length</code>指的是长度，不是结束的下标，也就是它可以翻译为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">r</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span> <span class="c1"># 注意不是r[16:16]</span>
+</span></span></code></pre></div><p><code>base64_decode(m)</code>函数是对js的原生Base64编码api的封装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">base64_decode</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">window</span><span class="p">.</span><span class="nx">atob</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>大致使用如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">&#39;javascript&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">window</span><span class="p">.</span><span class="nx">btoa</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="c1">//转码结果 &#34;amF2YXNjcmlwdA==&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nb">window</span><span class="p">.</span><span class="nx">atob</span><span class="p">(</span><span class="s2">&#34;amF2YXNjcmlwdA==&#34;</span><span class="p">)</span> <span class="c1">//解码结果 &#34;javascript&#34;
+</span></span></span></code></pre></div><p>Base64是一种用64个字符来表示任意二进制数据的方法。幸运的是python内置的有base64库，可以直接进行base64的编解码。我们也对他进行一个封装，方便阅读。这里有一个要注意的是，因为base64是把3个字节变为4个字节，base64编码的长度必须是4的倍数，所以对于不是4的倍数的字符，需要加上=把base64字符串的长度变为4的倍数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">decode_base64</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="s1">&#39;=&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p><code>var h = new Array(256);</code>翻译过来就是<code>h = list(range(256))</code></p>
+<p><code>c.charCodeAt(g % c.length)</code>调用的是js的<code>stringObject.charCodeAt(index)</code>函数，返回指定位置的字符的<code>Unicode</code>编码。这个返回值是<code>0 - 65535</code>之间的整数。这个方法相当于python的<code>ord()</code>函数。这行翻译过来就是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">b</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">g</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)])</span>
+</span></span></code></pre></div><p><code>k = k.split(&quot;&quot;);</code>是将字符串<code>k</code>分解成单独的字符列表，在python中字符串本身也是一个可迭代对象，忽略就好。</p>
+<p><code>chr()</code>和<code>ord()</code>和python内置的<code>chr()</code>、<code>ord()</code>函数类似，我们直接调用对于函数，运行则回报错：<code>ord() expected string of length 1, but int found</code>。因为python中的<code>ord()</code>函数参数是一个<code>str</code>类型的参数，而<code>k[g]</code>实际上是一个字节，我们就不用调用<code>ord()</code>函数就可以了。即：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">t</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">h</span><span class="p">[(</span><span class="n">h</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">+</span> <span class="n">h</span><span class="p">[</span><span class="n">f</span><span class="p">])</span> <span class="o">%</span> <span class="mi">256</span><span class="p">]))</span>
+</span></span></code></pre></div><h2 id="最后">最后</h2>
+<p>如果进行到这里，基本上对于煎蛋网的抓取已经可以自己实现了。懒得去写的朋友可以直接看我整理好的代码：</p>
+<p><a href="https://github.com/Blackyukun/Jiandan">Jiandan</a></p>
+<p>拜了个拜。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://varkai.com">Designed by VarKai,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.github.io/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.github.io/js/fancybox.min.js"></script>
+<script src="https://yokonsan.github.io/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on 乾之 三爻</title>
+    <link>https://yokonsan.github.io/tags/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 18 Dec 2017 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>可视化分钱的概率模拟算法</title>
+      <link>https://yokonsan.github.io/posts/2017/12/visualization-money-algorithm-imitate/</link>
+      <pubDate>Mon, 18 Dec 2017 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.github.io/posts/2017/12/visualization-money-algorithm-imitate/</guid>
+      <description>介绍 之前在一篇文章上看到一个问题，说：“一个房间里有100个人，没人有100块钱，每分 钟每人随机给另外的人一块钱，那么过一段时间后，这100个人的财富分布是什么情 况？”。如果按照个人的常规直觉，无论过</description>
+    </item>
+    
+  </channel>
+</rss>

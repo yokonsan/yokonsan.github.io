@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Python爬虫(7):多进程抓取拉钩网十万数据 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="由于拉钩网页面做了一些更新，之前的程序无法正常工作，本篇文章做一次更新。只更新一些程序和一些程序的实现方法。由于没有仔细修改，可能前后语言不通顺，大家谅解。 大家好，几天没有更新了。相信大家经过前两篇的" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.github.io/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.github.io/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.github.io/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2017/6/python-spider-crawl-data-multiprocess/'>Python爬虫(7):多进程抓取拉钩网十万数据</a></h2>
+                        <span class="date">2017.06.12</span>
+                    </div>
+                    <div class="post_content markdown"><p>由于拉钩网页面做了一些更新，之前的程序无法正常工作，本篇文章做一次更新。只更新一些程序和一些程序的实现方法。由于没有仔细修改，可能前后语言不通顺，大家谅解。</p>
+<hr>
+<p>大家好，几天没有更新了。相信大家经过前两篇的练手爬虫，大家已经知道如何抓取一个简单网站。</p>
+<p>这篇文章我们来抓取 <a href="https://www.lagou.com/">拉钩网</a> 的招聘信息。全部抓取大概十几万条全国招聘信息，并且保存数据库。</p>
+<h2 id="准备">准备</h2>
+<h3 id="安装mongodb数据库">安装Mongodb数据库</h3>
+<p>其实不是一定要使用<code>MongoDB</code>，大家完全可以使用<code>MySQL</code>或者<code>Redis</code>，全看大家喜好。这篇文章我们的例子是<code>Mongodb</code>，所以大家需要 <a href="https://www.mongodb.com/">下载</a> 它。</p>
+<p>在<code>Windows</code>中。由于<code>MongoDB</code>默认的数据目录为<code>C:\data\db</code>，建议大家直接在安装的时候更改默认路径为<code>C:\MongoDB</code>.</p>
+<p>然后创建如下目录文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">C:\data\log\mongod.log  //用于存储数据库的日志
+</span></span><span class="line"><span class="cl">C:\data\db    //用于存储数据库数据
+</span></span></code></pre></div><p>然后在<code>C:\MongoDB</code>文件夹下（安装 Mongodb 路径）创建配置文件<code>mongod.cfg</code>。并且在配置文件里写入以下配置：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">systemLog:
+</span></span><span class="line"><span class="cl"> destination: file
+</span></span><span class="line"><span class="cl">	path: C:\data\log\mongod.log
+</span></span><span class="line"><span class="cl">storage:
+</span></span><span class="line"><span class="cl">	dbPath: C:\data\db
+</span></span></code></pre></div><p>大家记住要打开文件后缀名，不然我们可能创建了一个<code>mongod.cfg.txt</code>文件。</p>
+<p>最后我们需要打开管理员权限的 CMD 窗口，执行如下命令，安装数据库成服务：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#34;C:\mongodb\bin\mongod.exe&#34; --config &#34;C:\mongodb\mongod.cfg&#34; --install
+</span></span></code></pre></div><p>设置为服务后，需要在管理员权限打开的<code>windows cmd</code>窗口用服务的方式启动或停止<code>MongoDB</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">net start mongodb    //启动mongodb服务
+</span></span><span class="line"><span class="cl">net stop mongodb     //关闭mongodb服务
+</span></span></code></pre></div><p>好了，安装好<code>Mongodb</code>数据库后，我们需要安装<code>PyMongo</code>，它是<code>MongoDB</code>的<code>Python</code>接口开发包。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pip install pymongo
+</span></span></code></pre></div><h2 id="开始">开始</h2>
+<p>准备完成后，我们就开始浏览拉勾网。我们可以发现拉勾网所有的招聘职位都在左侧分类里。如图：</p>
+<p><img src="/image/post9/post9_1.jpg" alt="post9_1.jpg"></p>
+<p>我们先获取首页HTML文件:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">RequestException</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.lagou.com/&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取页面源码函数</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_page_resp</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">	<span class="k">except</span> <span class="n">RequestException</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">get_page_resp</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>然后我们打开开发者工具，找到招聘职业的位置。</p>
+<p><img src="/image/post9/post9_2.jpg" alt="post9_2.jpg"></p>
+<p>大家还记得BeautifulSoup的CSS选择器吧，我们直接使用<code>.select()</code>方法获取标签信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">all_positions</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;div.menu_sub.dn &gt; dl &gt; dd &gt; a&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">all_positions</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_positions</span><span class="p">))</span>
+</span></span></code></pre></div><p>输出结果：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[&lt;a class=&#34;curr&#34; href=&#34;https://www.lagou.com/zhaopin/Java/&#34; data-lg-tj-cid=&#34;idnull&#34; data-lg-tj-id=&#34;4O00&#34; data-lg-tj-no=&#34;0101&#34;&gt;Java&lt;/a&gt;, &lt;a class=&#34;curr&#34; href=&#34;https://www.lagou.com/zhaopin/C%2B%2B/&#34; data-lg-tj-cid=&#34;idnull&#34; data-lg-tj-id=&#34;4O00&#34; data-lg-tj-no=&#34;0102&#34;&gt;C++&lt;/a&gt;, # ... 省略部分 &lt;a class=&#34;&#34; href=&#34;https://www.lagou.com/zhaopin/fengxiankongzhizongjian/&#34; data-lg-tj-cid=&#34;idnull&#34; data-lg-tj-id=&#34;4U00&#34; data-lg-tj-no=&#34;0404&#34;&gt;风控总监&lt;/a&gt;, &lt;a class=&#34;&#34; href=&#34;https://www.lagou.com/zhaopin/zongcaifuzongcai/&#34; data-lg-tj-cid=&#34;idnull&#34; data-lg-tj-id=&#34;4U00&#34; data-lg-tj-no=&#34;0405&#34;&gt;副总裁&lt;/a&gt;] 
+</span></span><span class="line"><span class="cl">260
+</span></span></code></pre></div><p>获取到所有职位标签的<code>a</code>标签后，我们只需要提取标签的<code>href</code>属性和标签内内容，就可以获得到职位的招聘链接和招聘职位的名称了。我们准备信息生成一个字典。方便我们后续程序的调用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 解析首页获得所有职位信息的函数</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parse_index</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://www.lagou.com/&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">get_html</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="s1">&#39;lxml&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">all_positions</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;div.menu_sub.dn &gt; dl &gt; dd &gt; a&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">joburls</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_positions</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="n">jobnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_positions</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">joburl</span><span class="p">,</span> <span class="n">jobname</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">joburls</span><span class="p">,</span> <span class="n">jobnames</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="s1">&#39;url&#39;</span> <span class="p">:</span> <span class="n">joburl</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">			<span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="n">jobname</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 这里使用yield语法糖，不熟悉的同学自己查看资料哦</span>
+</span></span><span class="line"><span class="cl">		<span class="k">yield</span> <span class="n">data</span>
+</span></span></code></pre></div><p>这里我们用<code>zip</code>函数，同时迭代两个<code>list</code>。生成一个键值对。</p>
+<p>接下来我们可以随意点击一个职位分类，分析招聘页面的信息。</p>
+<h2 id="分页">分页</h2>
+<p>我们首先来分析下网站页数信息。经过我的观察，每个职位的招聘信息最多不超过 30 页。也就是说，我们只要从第 1 页循环到第 30 页，就可以得到所有招聘信息了。但是也可以看到有的职位招聘信息，页数并不到 30 页。以下图为例：</p>
+<p><img src="/image/post9/post9_3.jpg" alt="post9_3.jpg"></p>
+<p>如果我们访问页面：<code>https://www.lagou.com/zhaopin/Java/31/</code></p>
+<p>也就是第 31 页。我们会得到 404 页面。所以我们需要在访问到404页面时进行过滤。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span></code></pre></div><p>这样我们就可以放心的 30 页循环获得每一页招聘信息了。</p>
+<p>我们的每一页<code>url</code>使用<code>format</code>拼接出来：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">for page in (1, 31):
+</span></span><span class="line"><span class="cl">	link = &#39;{}{}/&#39;.format(url, str(page))
+</span></span></code></pre></div><h2 id="获取信息">获取信息</h2>
+<p><img src="/image/post9/post9_4.jpg" alt="post9_4.jpg"></p>
+<p>我们可以看到上面划线的信息。这就是我们要抓取的信息了。</p>
+<p>当然。抓取的方法千篇一律，我们可以使用<code>find()</code>或<code>find_all()</code></p>
+<p>选择器，当然也可以使用 CSS选择器。但是 CSS选择器相对于前两者代码量稍微少一些。这里大家自己动手抓取，我们直接上代码供大家借鉴。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 职位信息 </span>
+</span></span><span class="line"><span class="cl"><span class="n">positions</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.position &gt; div.p_top &gt; a &gt; h3&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 工作地址 </span>
+</span></span><span class="line"><span class="cl"><span class="n">adds</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.position &gt; div.p_top &gt; a &gt; span &gt; em&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 发布时间 </span>
+</span></span><span class="line"><span class="cl"><span class="n">publishs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.position &gt; div.p_top &gt; span&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 薪资信息</span>
+</span></span><span class="line"><span class="cl"><span class="n">moneys</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.position &gt; div.p_bot &gt; div &gt; span&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 工作需求 </span>
+</span></span><span class="line"><span class="cl"><span class="n">needs</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.position &gt; div.p_bot &gt; div&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 发布公司 </span>
+</span></span><span class="line"><span class="cl"><span class="n">companys</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_top &gt; div.company &gt; div.company_name &gt; a&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="n">tags</span> <span class="o">=</span> <span class="p">[]</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 由于我发现有的招聘信息没有标签信息，if判断防止没有标签报错 </span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">&#39;li_b_l&#39;</span><span class="p">):</span> 
+</span></span><span class="line"><span class="cl">	<span class="c1"># 招聘信息标签 </span>
+</span></span><span class="line"><span class="cl">	<span class="n">tags</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_bot &gt; div.li_b_l&#39;</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1"># 公司福利 </span>
+</span></span><span class="line"><span class="cl"><span class="n">fulis</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;ul &gt; li &gt; div.list_item_bot &gt; div.li_b_r&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>获取到全部信息后，我们同样的把他们组成键值对字典。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">position</span><span class="p">,</span><span class="n">add</span><span class="p">,</span><span class="n">publish</span><span class="p">,</span><span class="n">money</span><span class="p">,</span><span class="n">need</span><span class="p">,</span><span class="n">company</span><span class="p">,</span><span class="n">tag</span><span class="p">,</span><span class="n">fuli</span> <span class="ow">in</span> \
+</span></span><span class="line"><span class="cl">		<span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span><span class="n">adds</span><span class="p">,</span><span class="n">publishs</span><span class="p">,</span><span class="n">moneys</span><span class="p">,</span><span class="n">needs</span><span class="p">,</span><span class="n">companys</span><span class="p">,</span><span class="n">tags</span><span class="p">,</span><span class="n">fulis</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;position&#39;</span> <span class="p">:</span> <span class="n">position</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;add&#39;</span> <span class="p">:</span> <span class="n">add</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;publish&#39;</span> <span class="p">:</span> <span class="n">publish</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;money&#39;</span> <span class="p">:</span> <span class="n">money</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;need&#39;</span> <span class="p">:</span> <span class="n">need</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;company&#39;</span> <span class="p">:</span> <span class="n">company</span><span class="o">.</span><span class="n">get_text</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;tag&#39;</span> <span class="p">:</span> <span class="n">tag</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;-&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">		<span class="s1">&#39;fuli&#39;</span> <span class="p">:</span> <span class="n">fuli</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>组成字典的目的是方便我们将全部信息保存到数据库。</p>
+<h2 id="保存数据库">保存数据库</h2>
+<p>保存数据库前我们需要配置数据库信息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">pymongo</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">lagou</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s1">&#39;lagou&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">url_list</span> <span class="o">=</span> <span class="n">lagou</span><span class="p">[</span><span class="s1">&#39;url_list&#39;</span><span class="p">]</span>
+</span></span></code></pre></div><p>这里我们导入了<code>pymongo</code>库，并且与<code>MongoDB</code>建立连接，这里是默认连接本地的<code>MongoDB</code>数据。创建并选择一个数据库<code>lagou</code>，并在这个数据库中，创建一个<code>table</code>，即<code>url_list</code>。然后，我们进行数据的保存：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="n">url_list</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;保存数据库成功&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span></code></pre></div><p>如果保存成功，打印出成功信息。</p>
+<h2 id="多进程抓取">多进程抓取</h2>
+<p>十万多条数据是不是抓取的有点慢，有办法，我们使用多进程同时抓取。由于<code>Python</code>的历史遗留问题，多线程在<code>Python</code>中始终是个美丽的梦。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">datas</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">url</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">mongo_table</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 因为有的职位是以&#39;.&#39;开头的，比如.Net，数据库表名不能以.开头</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="n">mongo_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="n">mongo_table</span> <span class="o">=</span> <span class="n">mongo_table</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 我们把之前抓取职位所有招聘信息的程序整理为parse_link()函数</span>
+</span></span><span class="line"><span class="cl">		<span class="c1"># 这个函数接收职位url，页码，和数据库表名为参数</span>
+</span></span><span class="line"><span class="cl">		<span class="n">parse_link</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">mongo_table</span><span class="p">)</span>
+</span></span></code></pre></div><p>我们把之前提取职位招聘信息的代码，写成一个函数，方便我们调用。这里的<code>parse_link()</code>就是这个函数，他就收职位的 url 和所有页数为参数。我们<code>get_alllink_data()</code>函数里面使用<code>for</code>循环 30 页的数据。然后这个作为主函数传给多进程内部调用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">datas</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">parse_index</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">datas</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl">	<span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span></span></code></pre></div><p>这里是一个<code>pool</code>进程池，我们调用进程池的<code>map</code>方法.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">map(func, iterable[,chunksize=None])
+</span></span></code></pre></div><p>多进程<code>Pool</code>类中的<code>map</code>方法，与<code>Python</code>内置的<code>map</code>函数用法行为基本一致。它会使进程阻塞，直到返回结果。需要注意，虽然第二个参数是一个迭代器，但在实际使用中，必须在整个队列都就绪后，程序才会运行子进程。<code>join()</code></p>
+<p>方法等待子进程结束后再继续往下运行，通常用于进程间的同步.</p>
+<h2 id="针对反爬">针对反爬</h2>
+<p>如果大家就这样整理完代码，直接就开始抓取的话。相信在抓取的不久后就会出现程序中止不走了。我刚刚第一次中止后，我以为是网站限制了我的 ip。于是我做了如下改动。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">random</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">user_agent_list</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39; Mozilla/5.0 (Windows; U; Windows NT 5.2) Gecko/2008070208 Firefox/3.0.1&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.2)&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">user_agent</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">user_agent_list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">headers</span>  <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="n">user_agent</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Connection&#39;</span><span class="p">:</span><span class="s1">&#39;keep-alive&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">proxy_list</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;http://140.224.76.21:808&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;http://60.178.14.90:8081&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;http://121.232.146.13:9000&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">proxy_ip</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">proxy_list</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="n">proxy_ip</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></div><p>这里我是直接在在网上找了一些免费的<code>ip</code>，还自己找了几个浏览器的<code>user-agent</code>。利用<code>Python</code>内置的<code>random</code>库，开始随机选择列表里的<code>user-agent</code>和<code>ip</code>。并且将参数传入<code>requests</code>内继续抓取。为了防止请求频率过快，我们设置每次请求结束停留一秒。然后我以为问题这么结束了。就开始继续抓取，但是在之前中断的位置突然有中断了。</p>
+<p>于是，我在代码抓取信息位置添加了一句打印<code>url</code>的代码。我得到了中断爬取的<code>url</code>，然后我手动多点进去，发现了这个网页。当然出现这个情况并不是更换<code>ip</code>不可以，而是我们的ip太少了，一个<code>ip</code>可能仍然出现多次抓取的情况，后续我将会和大家一起写一个自己的<code>ip</code>代理池。</p>
+<p><img src="/image/post9/post9_5.jpg" alt="post9_5.jpg"></p>
+<h2 id="模拟登录">模拟登录</h2>
+<p>没错这是一个登录界面，不知道是不是这里的浏览器头，或者ip请求过多。如果继续增多<code>ip</code>和<code>user_agent</code>就不会出现这种情况。</p>
+<p>但是如何面对这种需要登录才能持续爬取的网站呢，很简单，我们只要打开浏览器的开发者工具。登录自己的账号，在<code>Network</code>标签找一个请求，查看你的请求头部信息，找到自己的<code>cookies</code>。这个<code>cookies</code>就是你的登录信息了，我们需要将他和你的<code>user-agent</code>一样，添加到请求头就可以了。如果大家不明白这个<code>cookies</code>是什么，没关系，后面会有专门的讲解。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;Cookie&#39;</span><span class="p">:</span><span class="s1">&#39;user_trace_token=20170603115043-d0c257a054ee44f99177a3540d44dda1; LGUID=20170603115044-d1e2b4d1-480f-11e7-96cf-525400f775ce; JSESSIONID=ABAAABAAAGHAABHAA8050BE2E1D33E6C2A80E370FE9167B; _gat=1; PRE_UTM=; PRE_HOST=; PRE_SITE=; PRE_LAND=https%3A</span><span class="si">%2F%2F</span><span class="s1">www.lagou.com</span><span class="si">%2F</span><span class="s1">; index_location_city=</span><span class="si">%E</span><span class="s1">5</span><span class="si">%85%</span><span class="s1">A8</span><span class="si">%E</span><span class="s1">5%9B%BD; login=false; unick=&#34;&#34;; _putrc=&#34;&#34;; _ga=GA1.2.922290439.1496461627; X_HTTP_TOKEN=3876430f68ebc0ae0b8fac6c9f163d45; _ga=GA1.3.922290439.1496461627; LGSID=20170720174323-df1d6e50-6d2f-11e7-ac93-5254005c3644; LGRID=20170720174450-12fc5214-6d30-11e7-b32f-525400f775ce; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1500541369; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1500543655&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>好了我们继续抓取，发现这次程序并没有中止。<del><del>但是由于博主网速过慢，抓取太慢了，还没有全部抓取下来，不知道后面会不会出现问题。</del></del></p>
+<p><strong>这次更新，我是完全抓取玩全站才过来的，没错我已经抓取了全部的信息。用时1412 .9008133411407 秒。</strong></p>
+<p><img src="/image/post9/post9_6.jpg" alt="post9_6.jpg"></p>
+<p>好了，说了这么多，基本也都说完了。</p>
+<h2 id="项目地址">项目地址</h2>
+<p>对整理代码有疑惑的伙伴可以点击 <a href="https://github.com/Blackyukun/LaGou">这里</a>。</p>
+<h2 id="最后">最后</h2>
+<p>这是我已经抓取的一部分。这里如果大家希望看到<code>Mongodb</code>数据库里的保存内容。</p>
+<p>我们需要安装一个<code>Mongodb</code>可视化应用 <a href="https://robomongo.org/">robomango</a>。</p>
+<p>安装没什么要说的，大家链接到我们的<code>lagou</code>数据库，就可以看到里面的数据了。</p>
+<p><img src="/image/post9/post9_7.jpg" alt="post9_7.jpg"></p>
+<p>如果博主后面把全部数据抓下来后，可以和大家一起进行数据分析，分析<code>Python</code>招聘的一些信息啊什么的。大家加油。</p>
+<p>谢谢阅读</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://varkai.com">Designed by VarKai,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.github.io/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.github.io/js/fancybox.min.js"></script>
+<script src="https://yokonsan.github.io/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

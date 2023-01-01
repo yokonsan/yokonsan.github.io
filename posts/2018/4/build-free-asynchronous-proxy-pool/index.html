@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Python爬虫(14):搭建免费异步IP代理池 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="之前写爬虫的时候，经常遇到被封IP的情况。解决办法是控制爬虫请求的时间，这样效率低很多，而且一般网站都会有ip访问阈值监控，超过访问阈值仍然可能会被封。最直接的办法是更换ip，如果可以建议选择付费的代" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.github.io/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.github.io/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.github.io/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.github.io/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/4/build-free-asynchronous-proxy-pool/'>Python爬虫(14):搭建免费异步IP代理池</a></h2>
+                        <span class="date">2018.04.07</span>
+                    </div>
+                    <div class="post_content markdown"><p>之前写爬虫的时候，经常遇到被封IP的情况。解决办法是控制爬虫请求的时间，这样效率低很多，而且一般网站都会有ip访问阈值监控，超过访问阈值仍然可能会被封。最直接的办法是更换ip，如果可以建议选择付费的代理服务，省事又便捷。当然网上也有很多免费代理，只不过这些代理能不能使用就需要我们自己去检测。</p>
+<p>在几个月前，我参考<code>github</code>上的一些项目，搭建过一个代理池。主要作用就是抓取网上的免费代理，经过是否可用的检测，将可以代理放入数据库，并且定时对入库的代理进行检测，保证库中的代理一直是可用的。这样每次爬虫被封ip的时候，便向库中请求一个ip进行更换。最近正好需要使用大量的代理ip，就想起了这个项目，并且做了很大的改进。本篇文章主要写一下代理池的实现。</p>
+<h2 id="代理池设计">代理池设计</h2>
+<ul>
+<li>
+<p>获取器：就是我们的爬虫接口，抓取免费ip，这里我们为了后面的可扩展性，需要支持自由添加爬虫进获取器；</p>
+</li>
+<li>
+<p>数据库：我们选择<code>Mongodb</code>存放有效的代理，上面文章写了关于<code>Mongodb</code>可扩展的封装，我们这里直接搬来使用；</p>
+</li>
+<li>
+<p>调度器：主要是用于检测爬虫是否有效，并添加有效代理入库，定制计划任务检测库中代理，控制爬虫的启动；</p>
+</li>
+<li>
+<p>Api：为了更方便的调用新的代理，我们使用flask做外部接口。</p>
+</li>
+</ul>
+<p>由于免费代理可能在几十分钟后就不能使用，为了每次请求都尽可能从库中拿到可用代理，我们实现一个栈的数据结构，先进后出，后进先出。也就是说每次拿到代理都是从数据库的最右端获取，拿到最新检测过得有效代理。</p>
+<p>代理池结构：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ProxyPool \
+</span></span><span class="line"><span class="cl">    Api \
+</span></span><span class="line"><span class="cl">        __init__.py
+</span></span><span class="line"><span class="cl">        api.py
+</span></span><span class="line"><span class="cl">    Spider \
+</span></span><span class="line"><span class="cl">        __init__.py
+</span></span><span class="line"><span class="cl">        get_proxy.py
+</span></span><span class="line"><span class="cl">    Db \
+</span></span><span class="line"><span class="cl">        __init__.py
+</span></span><span class="line"><span class="cl">        db.py
+</span></span><span class="line"><span class="cl">    Schedule \
+</span></span><span class="line"><span class="cl">        __init__.py
+</span></span><span class="line"><span class="cl">        adder.py
+</span></span><span class="line"><span class="cl">        tester.py
+</span></span><span class="line"><span class="cl">        schedule.py
+</span></span><span class="line"><span class="cl">    config.py
+</span></span><span class="line"><span class="cl">    run.py
+</span></span></code></pre></div><h2 id="获取器">获取器</h2>
+<p>我们打开百度输入“免费ip”就可以看到很多提供免费ip的网站，这里我们选择<a href="https://ip.ihuan.me/?page=1&amp;address=5Lit5Zu9">幻代理</a>，<a href="http://www.66ip.cn/areaindex_1/1.html">66代理</a>，<a href="http://www.kuaidaili.com/free/inha/">快代理</a>，<a href="http://www.xicidaili.com/">西刺代理</a>。</p>
+<p>主要是有很多代理站点的ip更新时间都很老了，大概率是不能使用的，就不浪费时间了。</p>
+<h3 id="抓取代理">抓取代理</h3>
+<p>对代理的抓取，不做多余的叙述，这里以西刺代理为例。对于这些网站的抓取其实很简单，过多的解释是浪费时间。</p>
+<p><img src="/image/post32/post32_1.png" alt="post32_1.png"></p>
+<p>直接上代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># coding=utf-8</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># __author__ = &#39;yk&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="ne">ConnectionError</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parse_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error.&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">proxy_xici</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://www.xicidaili.com/&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">resp</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">html</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ips</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//*[@id=&#34;ip_list&#34;]/tr/td[2]/text()&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ports</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//*[@id=&#34;ip_list&#34;]/tr/td[3]/text()&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ips</span><span class="p">,</span> <span class="n">ports</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">proxy</span> <span class="o">=</span> <span class="n">ip</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">port</span>
+</span></span><span class="line"><span class="cl">        <span class="k">yield</span> <span class="n">proxy</span>
+</span></span></code></pre></div><p>我们使用xpath解析出代理。</p>
+<h3 id="可扩展">可扩展</h3>
+<p>我们需要抓取的网站有四个，未来肯定会更多，为了能够更方便的扩展，我们需要写一个元类。元类主要是控制代理获取类的实现，在获取类中加入两个属性。用于存放类里的每个网站爬虫方法，以及所有爬虫的数量。方便我们在调度器中调用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Spider/get_proxy.py</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ProxyMetaclass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    元类，在ProxyGetter类中加入
+</span></span></span><span class="line"><span class="cl"><span class="s2">    __CrawlFunc__和__CrawlFuncCount__两个属性
+</span></span></span><span class="line"><span class="cl"><span class="s2">    分别表示爬虫函数和爬虫函数的数量
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;__CrawlFunc__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;proxy_&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;__CrawlFunc__&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;__CrawlFuncCount__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ProxyGetter</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ProxyMetaclass</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">proxy_ip66</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">proxy_xici</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">proxy_kuai</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">proxy_ihuan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">pass</span>
+</span></span></code></pre></div><p><code>__init__</code>方法和<code>__new__</code>方法的区别，我在一次面试中被问到过。这里做一个简单的解释：<code>__new__</code>是一个静态方法，用于控制类的实例创建，也就是在创建实例时调用他。而<code>__init__</code>是一个实例方法，用于初始化一个实例。</p>
+<p>这里<code>__new__</code>方法给实例添加两个属性，他的参数分别表示当前类的对象本身(和self类似)，<code>name</code>表示类的名字，<code>bases</code>是一个元组，表示类继承的父类集合，<code>attrs</code>表示类的方法集合，每一个方法是一个键值对。</p>
+<p><code>str.startswith('ttt')</code>是判断一个字符串是否以&rsquo;ttt&rsquo;开头，相对的有<code>str.endswith('ttt')</code>判断字符串是否以&rsquo;ttt&rsquo;结尾。这个方法很方便的将类方法中的爬虫方法过滤出来，将他放入<code>__CrawlFunc__</code>中。</p>
+<p>为了方便调用我们还需要一个接口，供以调用爬虫方法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ProxyGetter</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ProxyMetaclass</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">get_raw_proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">proxies</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&#34;self.</span><span class="si">{}</span><span class="s2">()&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">callback</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Getting&#39;</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="s1">&#39;from&#39;</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proxies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">proxies</span>
+</span></span></code></pre></div><p>python内置的<code>eval</code>函数作用不知道的可以自行查找，这里做一个简单解释：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; m = 5
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; n = 3
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; eval(&#39;m&#39;) + eval(&#39;n&#39;)
+</span></span><span class="line"><span class="cl">8
+</span></span></code></pre></div><h2 id="数据库">数据库</h2>
+<p>数据库我们直接使用上篇文章封装的类，不过未免存入相同ip，我们需要判断去重。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Db/db.py</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    放置代理到数据库
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_num</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s1">&#39;proxy&#39;</span><span class="p">:</span> <span class="n">proxy</span><span class="p">}):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span><span class="s1">&#39;proxy&#39;</span><span class="p">:</span> <span class="n">proxy</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="n">num</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">({</span><span class="s1">&#39;proxy&#39;</span><span class="p">:</span> <span class="n">proxy</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="n">num</span><span class="p">})</span>
+</span></span></code></pre></div><p>具体实现可以参考上篇文章。</p>
+<h2 id="调度器">调度器</h2>
+<p>调度器包含三个部分：</p>
+<ul>
+<li>
+<p>添加类：判断数据库中的代理数量是否达到最大阈值，进行启动爬虫和停止爬虫；</p>
+</li>
+<li>
+<p>测试类：对爬取到的代理进行检测，将有效的代理放入数据库；</p>
+</li>
+<li>
+<p>任务类：定时对数据库中的代理进行检测，用于启动整个调度器。</p>
+</li>
+</ul>
+<p>大致的逻辑就是这样，我们首先来实现一个测试类。</p>
+<h3 id="测试代理">测试代理</h3>
+<p>之前我对代理的检测是直接加上代理，请求百度，如果请求成功返回200响应，就证明代理有效。后来我发现，就算是无效的代理，在请求百度的时候也会出现200响应。所以我选择<code>http://2017.ip138.com/ic.asp</code>这个测试ip的站点作为检测站。大部分人都是在一个服务器上跑代理池和别的爬虫项目，所以代理池应该有很快的速度，这里我们选择在添加代理时异步测试代理是否有效。</p>
+<p>我们需要简单的理解python的异步库<code>asyncio</code>和基于<code>asyncio</code>实现的HTTP请求库<code>aiohttp</code>，这里我们使用<code>aiohttp</code>异步请求测试链接，检测代理是否有效，有效就将其放入数据库。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Schedule/tester.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">asyncio</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">aiohttp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Db.db</span> <span class="kn">import</span> <span class="n">MongodbClient</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 将配置信息放入配置文件config.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">TEST_URL</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ProxyTester</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">test_url</span> <span class="o">=</span> <span class="n">TEST_URL</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_proxies</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">set_raw_proxies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxies</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 供外部添加需要测试的代理</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_proxies</span> <span class="o">=</span> <span class="n">proxies</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">MongodbClient</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">async</span> <span class="k">def</span> <span class="nf">test_single_proxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        测试一个代理，如果有效，将他放入usable-proxies
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proxy</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">proxy</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">real_proxy</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">proxy</span>
+</span></span><span class="line"><span class="cl">                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Testing&#39;</span><span class="p">,</span> <span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_url</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="n">real_proxy</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                            <span class="c1"># 请求成功，放入数据库</span>
+</span></span><span class="line"><span class="cl">                            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Valid proxy&#39;</span><span class="p">,</span> <span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        异步测试所有代理
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tester is working...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">test_single_proxy</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span> <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_proxies</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="n">asyncio</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">tasks</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Async Error&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>关于<code>aiohttp</code>的用法，大家可以参考这篇<a href="https://www.jianshu.com/p/0efdc952e8ca">文章</a>。也可以直接参考<a href="https://github.com/HuberTRoy/aiohttp-chinese-documentation">中文文档</a></p>
+<p><code>aiohttp</code>大致的get请求方式如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">proxy</span><span class="o">=</span><span class="n">proxy</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">content</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p><code>test()</code>方法是启动测试的方法，使用<code>asyncio</code>库。<code>asyncio</code>的编程模型就是一个消息循环。最后我们获取一个<code>EventLoop</code>的引用：<code>loop = asyncio.get_event_loop()</code>，然后迭代出所有需要测试的代理，放入测试协程方法，将协程放入<code>EventLoop</code>中去执行。</p>
+<p>这样，一个异步测试的类就实现了。</p>
+<h3 id="添加代理">添加代理</h3>
+<p>这个类其实就是一个获取代理的循环，当库中代理数低于最低阈值，就启动爬虫获取代理，然后将这些代理放入测试类中去执行。为了方便添加类的调用，上面的测试类实现了放置需要测试代理的接口<code>set_raw_proxies()</code>方法，爬虫获取类也实现了供外部调用的方法<code>get_raw_proxies()</code>，这样我们只需要调用他们就可以了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Schedule/adder.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Db.db</span> <span class="kn">import</span> <span class="n">MongodbClient</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Spider.get_proxy</span> <span class="kn">import</span> <span class="n">ProxyGetter</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.tester</span> <span class="kn">import</span> <span class="n">ProxyTester</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PoolAdder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    启动爬虫，添加代理到数据库中
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">MongodbClient</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_tester</span> <span class="o">=</span> <span class="n">ProxyTester</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_crawler</span> <span class="o">=</span> <span class="n">ProxyGetter</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">is_over_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        判断数据库中代理数量是否达到设定阈值
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">get_nums</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span> <span class="k">else</span> <span class="kc">False</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">add_to_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        补充代理
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PoolAdder is working...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">proxy_count</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_over_threshold</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 迭代所有的爬虫，元类给ProxyGetter的两个方法</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># __CrawlFuncCount__是爬虫数量，__CrawlFunc__是爬虫方法</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">callback_label</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_crawler</span><span class="o">.</span><span class="n">__CrawlFuncCount__</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crawler</span><span class="o">.</span><span class="n">__CrawlFunc__</span><span class="p">[</span><span class="n">callback_label</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 调用ProxyGetter()方法进行抓取代理</span>
+</span></span><span class="line"><span class="cl">                <span class="n">raw_proxies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crawler</span><span class="o">.</span><span class="n">get_raw_proxies</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="c1"># 调用方法测试爬取到的代理</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">_tester</span><span class="o">.</span><span class="n">set_raw_proxies</span><span class="p">(</span><span class="n">raw_proxies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">_tester</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="n">proxy_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_proxies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_over_threshold</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Proxy is enough, waiting to be used...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">break</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">proxy_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The proxy source is exhausted.&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p><code>__CrawlFuncCount__</code>和<code>__CrawlFunc__</code>两个属性这里可以很方便的使我们调用所有爬虫。</p>
+<h3 id="定时启动调度器">定时启动调度器</h3>
+<p>任务类是一个定时执行的程序，他实现一个定时启动调度器，检查数据库代理的方法。这里我们实现两个定时任务，一个是定时取部分代理调用测试类检测，一个是定时检测数据库中的代理是否低于最低阈值，调用添加类添加。所以，我们要实现两个定时任务的循环：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Schedulr/schedule.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ProxyPool.db</span> <span class="kn">import</span> <span class="n">MongodbClient</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.tester</span> <span class="kn">import</span> <span class="n">ProxyTester</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.adder</span> <span class="kn">import</span> <span class="n">PoolAdder</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">VALID_CHECK_CYCLE</span><span class="p">,</span> <span class="n">POOL_LEN_CHECK_CYCLE</span> \
+</span></span><span class="line"><span class="cl">        <span class="n">POOL_LOWER_THRESHOLD</span><span class="p">,</span> <span class="n">POOL_UPPER_THRESHOLD</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Schedule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@staticmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">valid_proxy</span><span class="p">(</span><span class="n">cycle</span><span class="o">=</span><span class="n">VALID_CHECK_CYCLE</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        从数据库中拿到一半代理进行检查
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">conn</span> <span class="o">=</span> <span class="n">MongodbClient</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tester</span> <span class="o">=</span> <span class="n">ProxyTester</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Refreshing ip...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># 调用数据库，从左边开始拿到一半代理</span>
+</span></span><span class="line"><span class="cl">            <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_nums</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Waiting for adding...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">            <span class="n">raw_proxies</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tester</span><span class="o">.</span><span class="n">set_raw_proxies</span><span class="p">(</span><span class="n">raw_proxies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tester</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@staticmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">check_pool</span><span class="p">(</span><span class="n">lower_threshold</span><span class="o">=</span><span class="n">POOL_LOWER_THRESHOLD</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">upper_threshold</span><span class="o">=</span><span class="n">POOL_UPPER_THRESHOLD</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">cycle</span><span class="o">=</span><span class="n">POOL_LEN_CHECK_CYCLE</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">        如果代理数量少于最低阈值，添加代理
+</span></span></span><span class="line"><span class="cl"><span class="s2">        &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">conn</span> <span class="o">=</span> <span class="n">MongodbClient</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">adder</span> <span class="o">=</span> <span class="n">PoolAdder</span><span class="p">(</span><span class="n">upper_threshold</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_nums</span> <span class="o">&lt;</span> <span class="n">lower_threshold</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">adder</span><span class="o">.</span><span class="n">add_to_pool</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ip Processing running...&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">valid_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Schedule</span><span class="o">.</span><span class="n">valid_proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">check_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">Schedule</span><span class="o">.</span><span class="n">check_pool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">valid_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">check_process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></span></code></pre></div><p>代码中的几个变量需要放置配置文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># config.py</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Pool 的低阈值和高阈值</span>
+</span></span><span class="line"><span class="cl"><span class="n">POOL_LOWER_THRESHOLD</span> <span class="o">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="n">POOL_UPPER_THRESHOLD</span> <span class="o">=</span> <span class="mi">40</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 两个调度进程的周期</span>
+</span></span><span class="line"><span class="cl"><span class="n">VALID_CHECK_CYCLE</span> <span class="o">=</span> <span class="mi">600</span>
+</span></span><span class="line"><span class="cl"><span class="n">POOL_LEN_CHECK_CYCLE</span> <span class="o">=</span> <span class="mi">20</span>
+</span></span></code></pre></div><p><code>valid_proxy</code>方法每次从数据库的左边开始拿到一般代理进行检测，这是因为主要是检测先添加进数据库的代理。然后调用测试类的<code>set_raw_proxies()</code>方法，过滤掉无效代理，将有效代理放于数据库右边。这样可以保证数据库中的代理都可以得到检测。</p>
+<p>要拿到数据库的左侧一半代理，我们需要更改数据库<code>get()</code>方法。这一步参考上篇文章不做多余叙述，或者直接参考本项目源码，后面放上。</p>
+<p><code>check_pool()</code>方法接收最高和最低阈值和方法周期三个参数。定时判断数据库的代理数量是否低于最低阈值，选择性调用添加类添加代理。</p>
+<p>最后开启两个进程，启动两个调度方法。</p>
+<h2 id="api">API</h2>
+<p><code>flask</code>是做<code>api</code>最好的选择，我们只需要提供获取代理以及获取代理总数的接口。这一步主要就是对数据库的链接获取操作，<code>flask</code>路由只需提供<code>/get</code>和<code>/counts</code>路由。这只需要看一下<code>flask</code>文档的第一页就可以了，不做解释。</p>
+<h2 id="启动代理池">启动代理池</h2>
+<p>对于启动代理池，我们只需要启动<code>flask</code>的<code>api</code>，和调度器就可以了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># run.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Api.api</span> <span class="kn">import</span> <span class="n">app</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Schedule.schedule</span> <span class="kn">import</span> <span class="n">Schedule</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 任务类的两个周期进程就是整个调度器</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s</span> <span class="o">=</span> <span class="n">Schedule</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span>
+</span></span></code></pre></div><h2 id="项目地址">项目地址</h2>
+<p><a href="https://github.com/Blackyukun/IPProxyPool">github</a></p>
+<p>可以直接<a href="https://github.com/Blackyukun/IPProxyPool/archive/master.zip">下载</a>到本地，切换到项目目录。</p>
+<p>安装依赖：<code>pip install -r requirements.txt</code></p>
+<p>启动：<code>python run.py</code></p>
+<h2 id="示例">示例</h2>
+<p>上面我们已经实现了我们的代理池，下面只是做一个基本的爬虫调用。</p>
+<p>首先我们启动代理池：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; python run.py
+</span></span></code></pre></div><p>如果没有报错则，并且显示的信息正常，说明代理池已经启动了。这是打开浏览器访问<code>http://127.0.0.1:5000/get</code>就可以看到一条代理了。</p>
+<p><img src="/image/post32/post32_2.png" alt="post32_2.png"></p>
+<p>最爬虫中调用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_proxy</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://127.0.0.1:5000/get&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ip</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">proxy</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">ip</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_resp</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ip</span> <span class="o">=</span> <span class="n">get_proxy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;http://</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">proxies</span><span class="o">=</span><span class="n">proxy</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;success&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>周末愉快！</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.github.io/tags/%E7%88%AC%E8%99%AB/">爬虫</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://varkai.com">Designed by VarKai,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>博观约取，厚积薄发</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.github.io/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.github.io/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.github.io/js/fancybox.min.js"></script>
+<script src="https://yokonsan.github.io/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
