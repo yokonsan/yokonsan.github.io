@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>基于flask的静态博客 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="我比较喜欢简单的东西，起初我的博客是很简单的，只有最基础的编辑文章和管理文章。 连评论框都没想去弄，现在想想确实有道理。最近一段时间忙于春节拜年，利用一些琐碎 的时间构思，实现了一个基于 flask 的静态博客。我个" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/2/static-blog-based-on-flask/'>基于flask的静态博客</a></h2>
+                        <span class="date">2018.02.21</span>
+                    </div>
+                    <div class="post_content markdown"><p>我比较喜欢简单的东西，起初我的博客是很简单的，只有最基础的编辑文章和管理文章。
+连评论框都没想去弄，现在想想确实有道理。最近一段时间忙于春节拜年，利用一些琐碎
+的时间构思，实现了一个基于 flask 的静态博客。我个人是比较喜欢用<code>markdown</code>的，所
+有这只适合于喜欢用<code>markdown</code>写东西的小伙伴。不了解<code>markdown</code>语法的可以看<a href="https://www.jianshu.com/p/de9c98bba332">这里</a>{:target=&quot;_blank&quot;}。</p>
+<p>或许你用过基于<code>node.js</code>的<code>hexo</code>或者基于<code>python</code>的<code>Pelican</code>这种重量级静态站点生
+成器（我也用过），但是为何不自己写一个呢。</p>
+<p>最近家里人催着找对象，有点难受，我就将项目改名为<code>quiet</code>。<code>quiet</code>是一个静态博
+客，他的特点在于支持用户上传他写好的<code>markdown</code>文章，然后解析<code>markdown</code>生成
+<code>html</code>文件，并且依据规定样式模版，保存为静态<code>html</code>文件。当然程序支持<code>Meta</code>信
+息，可以将文件的信息写好，好让程序判断他属于的标签、分类。对于存储一些必要的博
+客索引信息，我们可以使用<code>python</code>标准库的<code>shelve</code>库。</p>
+<p>博客样式主要模仿<code>Pelican</code>的主题<a href="https://github.com/molivier/nest">nest</a>{:target=&quot;_blank&quot;}，为什么
+用它。应为最近逛 <a href="https://foofish.net">python之禅</a>{:target=&quot;_blank&quot;} 博客的时候，看到这个主题，一
+来简洁美观，二来样式模仿起来简单。</p>
+<p><code>quiet</code>运行预览：</p>
+<p>首页：</p>
+<p><img src="/image/post30/post30_1.jpg" alt="post30_1.jpg"></p>
+<p>文章页：</p>
+<p><img src="/image/post30/post30_2.jpg" alt="post30_2.jpg"></p>
+<h2 id="构思">构思</h2>
+<p>我将<code>quiet</code>的实现分为三个部分：</p>
+<ol>
+<li>生成部分，负责转换<code>md</code>文件为<code>html</code>，并且生成对应的标签、分类信息；</li>
+<li>模版部分，是生成<code>html</code>文件的页面结构模版；</li>
+<li>路由部分，负责索引各个文件的资源，比如文章页，标签页等。</li>
+</ol>
+<p>生成部分自然是最核心的部分，对于解析<code>markdown</code>，我们使用<code>python</code>的<code>markdown</code>
+库，这个库提供了很多特殊语法的扩展，详细看[这里](<a href="https://github.com/Python-">https://github.com/Python-</a>
+Markdown/markdown)。文档写的不是很清楚，但是他的一些扩展都在源码<code>/extensions</code>文
+件夹下，比如<code>meta</code>,<code>codehilite</code>等。</p>
+<p>模版部分采用<code>flask</code>内置的<code>jinja2</code>语法，给生成的页面提供文章页、标签页等页面结构
+模版。</p>
+<p>路由部分就是用户访问指定<code>url</code>，路由便将指定位置的资源返回给用户。</p>
+<p>项目结构：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">quiet
+</span></span><span class="line"><span class="cl">	/quiet		-- flask项目目录
+</span></span><span class="line"><span class="cl">		/static		-- 存放静态文件目录包括生成的html
+</span></span><span class="line"><span class="cl">		/templates		-- html 模版目录
+</span></span><span class="line"><span class="cl">		__init__.py
+</span></span><span class="line"><span class="cl">		views.py    	-- 路由
+</span></span><span class="line"><span class="cl">	/source  	-- 存放 md 文件目录
+</span></span><span class="line"><span class="cl">	generate.py  	-- 生成 html 程序
+</span></span><span class="line"><span class="cl">	config.py  	-- 配置文件
+</span></span><span class="line"><span class="cl">	run.py  	-- 启动文件
+</span></span></code></pre></div><h2 id="生成功能">生成功能</h2>
+<p>我们就先来实现一个转换<code>md</code>文件生成<code>html</code>文件的生成类。首先先实现转换<code>md</code>为
+<code>html</code>的功能：</p>
+<p>安装<code>markdown</code>库和他的代码高亮扩展依赖：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pip install markdown
+</span></span></code></pre></div><p>将<code>markdown</code>文件转换为<code>html</code>函数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># generate.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">codecs</span> <span class="c1"># 标准库</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">markdown</span> <span class="kn">import</span> <span class="n">Markdown</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">markdown_to_html</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">body</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="n">md</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">extensions</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fenced_code&#39;</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">			<span class="s1">&#39;codehilite(css_class=highlight,linenums=None)&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;meta&#39;</span><span class="p">,</span> <span class="s1">&#39;admonition&#39;</span><span class="p">,</span> <span class="s1">&#39;tables&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="n">content</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">meta</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">Meta</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s1">&#39;Meta&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="o">...</span>
+</span></span></code></pre></div><p><code>codecs</code>这是<code>python</code>内置的标准库，我也是在看<code>markdown</code>库的文档才知道这么个库，
+主要作用是编码的转换。其实他和普通的文件读写没什么不同，大家可以自己查看标准库
+说明。</p>
+<h3 id="meta扩展">Meta扩展</h3>
+<p><code>extensions</code>参数传入的是<code>markdown</code>库的扩展，其中最主要的是<code>meta</code>。该扩展添加了
+用于定义文章数据信息的语法，<code>meta</code>语法包含一系列键值对，形如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">title: 我好帅
+</span></span><span class="line"><span class="cl">summary: 我真的好帅啊
+</span></span><span class="line"><span class="cl">author: 我啊
+</span></span><span class="line"><span class="cl">datetime: 2018-02-21
+</span></span><span class="line"><span class="cl">tag: 随笔
+</span></span><span class="line"><span class="cl">    生活
+</span></span><span class="line"><span class="cl">category: 无分类
+</span></span><span class="line"><span class="cl">balabala: xxxx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">正文开始
+</span></span></code></pre></div><p><strong>注意：</strong></p>
+<ul>
+<li>
+<p>关键字不区分大小写，可以由字母，数字，下划线和破折号组成，必须以冒号结尾。这
+些值由冒号后的任何内容组成，可以是空白的。</p>
+</li>
+<li>
+<p>如果一个关键字包含多个值，比如标签，必须写在在下一行且有字少4个空格的缩进。关
+键字可以根据需要具有尽可能多的行。</p>
+</li>
+<li>
+<p>第一个空白行结束文档的所有 meta 数据。因此，正文和 meta 之间字少有一个空行，
+并且文档的第一行不能为空。</p>
+</li>
+<li>
+<p>在 Markdown 进行任何进一步处理之前，所有元数据都将从文档中剥离，不会出现在正
+文中。</p>
+</li>
+</ul>
+<p>也就是说，上面的<code>meta</code>信息解析出来其实是一个字典，我们将他保存为<code>text</code>测试一
+下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; md = Markdown(extensions = [&#39;meta&#39;])
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; html = md.convert(text)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; print(html)
+</span></span><span class="line"><span class="cl">&lt;p&gt;正文开始&lt;/p&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; print(md.Meta)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">&#39;title&#39; : [&#39;我好帅&#39;],
+</span></span><span class="line"><span class="cl">&#39;summary&#39; : [&#39;我真的好帅啊&#39;],
+</span></span><span class="line"><span class="cl">&#39;author&#39; : [&#39;我啊&#39;],
+</span></span><span class="line"><span class="cl">&#39;datetime&#39; : [&#39;2018-02-21&#39;],
+</span></span><span class="line"><span class="cl">&#39;tag&#39; : [&#39;随笔&#39;,&#39;生活&#39;],
+</span></span><span class="line"><span class="cl">&#39;category&#39; : [&#39;无分类&#39;],
+</span></span><span class="line"><span class="cl">&#39;balabala&#39;: [&#39;xxx&#39;]
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></div><h3 id="fenced_code扩展">fenced_code扩展</h3>
+<p>该扩展主要定义了代码块的另一种写法，解决了只能缩进写代码块的限制。在标准的
+<code>markdown</code>语法中，写代码块是在代码前加一个 tab 或 4 个空格的缩进。而有了
+<code>fenced_code</code>扩展，我么可以这么写代码：</p>
+<pre><code>```python
+print('hello world')
+```
+</code></pre>
+<p>解析打印出来就是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#39;&lt;pre&gt;&lt;code class=&#34;python&#34;&gt;print(\&#39;hello world\&#39;)\n&lt;/code&gt;&lt;/pre&gt;&#39;
+</span></span></code></pre></div><h3 id="codehilite扩展">codehilite扩展</h3>
+<p>该扩展主要提供了代码块的高亮及行数功能，接收的两个参数<code>css_class</code>是解析后<code>div</code>
+标签的 css 类名称，默认是<code>codehilite</code>，我们把他设置为<code>highlight</code>。
+<code>codehilite</code>扩展依赖且使用<code>Pygments</code>库提供的代码高亮样式。安装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pip install pygments
+</span></span></code></pre></div><p><code>pygments</code>库中是不带样式的，看他的文档，我们可以使用他生成样式，在命令行输入：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pygmentize -f html -S colorful -a .highlight &gt; default.css
+</span></span></code></pre></div><p>这样就生成了一个<code>default.css</code>文件，我们把他放到<code>static/lib/</code>文件夹下。</p>
+<p><code>linenums</code>参数提供显示代码块行号的功能，设为<code>True</code>即为显示行号，默认为<code>None</code>不
+显示。</p>
+<h3 id="admonition和tables扩展">admonition和tables扩展</h3>
+<p><code>admonition</code>是一个警告样式的语法，示例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">!!! 注意
+</span></span><span class="line"><span class="cl">    我真的很帅。
+</span></span></code></pre></div><p>解析为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&lt;div class=&#34;admonition note&#34;&gt;
+</span></span><span class="line"><span class="cl">&lt;p class=&#34;admonition-title&#34;&gt;注意&lt;/p&gt;
+</span></span><span class="line"><span class="cl">&lt;p&gt;我真的很帅。&lt;/p&gt;
+</span></span><span class="line"><span class="cl">&lt;/div&gt;
+</span></span></code></pre></div><p><code>tables</code>扩展顾名思义就是提供了在<code>markdown</code>中创建表的功能：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">| 默认列 | 左对齐列 | 右对齐列 | 居中列 |
+</span></span><span class="line"><span class="cl">|:----|:----|----:|:----:|
+</span></span><span class="line"><span class="cl">| Hello | Hello | Hello | Hello |
+</span></span></code></pre></div><p>除了这些扩展外，还有比如生成文章目录的<code>toc</code>扩展，还有<code>extra</code>扩展，大家自行了
+解。</p>
+<h3 id="配置jinja2">配置Jinja2</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Environment</span><span class="p">,</span> <span class="n">FileSystemLoader</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">markdown_to_html</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1"># 解析meta获得信息</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data</span> <span class="o">=</span> <span class="n">parse_meta</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="s2">&#34;./quiet/templates&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="n">template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s1">&#39;post.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">html</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">article</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		    <span class="n">title</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="n">html</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parse_meta</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>		
+</span></span></code></pre></div><p><code>env</code>是创建的一个默认<code>jinja2</code>模板环境，我们把他设为<code>./quiet/templates</code>目录，这
+里面存放我们自己写的所有模版，比如<code>post.html</code>。</p>
+<p>我们只需要调用<code>get_template()</code>方法从这个环境中加载模板，并会返回已加载的
+<code>template</code>。用若干变量来渲染它，则需要调用<code>render()</code>方法。我们像模板中传入解析
+后的<code>html</code>文档，和解析后的<code>meta</code>信息，和文章标题。</p>
+<h3 id="解析meta">解析Meta</h3>
+<p>为什么要有这一步呢，主要是有些文件可能本身没有写<code>meta</code>信息，那么我们就要给他生
+成默认的信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">markdown_to_html</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">parse_meta</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">date</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;datetime&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;datetime&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">now</span>
+</span></span><span class="line"><span class="cl">	<span class="n">tag</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;其他&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">category</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;无分类&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">title</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">summary</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;summary&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;无描述&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">url</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.html&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;datetime&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">tag</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="n">category</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;summary&#39;</span><span class="p">:</span> <span class="n">summary</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">data</span>
+</span></span></code></pre></div><p>如果<code>meta</code>数据没有<code>datetime</code>日期信息，那么就默认是现在的时间，格式为：2018-02-
+21。</p>
+<p><code>os.path.splitext(os.path.basename(file))[0]</code>得到的是去掉扩展名的文件名。</p>
+<h3 id="保存文件">保存文件</h3>
+<p>既然生成了<code>html</code>，接下来就是保存它。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">save_html</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.html&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">_generated_folder</span> <span class="o">=</span> <span class="s1">&#39;./quiet/static/generated/&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">_generated_folder</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">html</span> <span class="o">=</span> <span class="n">markdown_to_html</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">save_html</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+</span></span></code></pre></div><p>我们将存储的文件夹设置为<code>./quiet/static/generated/</code>。<code>generate()</code>函数是主运行函
+数，但是我们需要<code>file</code>参数所属的<code>markdown</code>文件。</p>
+<h3 id="扫描所有md文件">扫描所有md文件</h3>
+<p>我们将存放<code>markdown</code>的文件夹设置为<code>./source/</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">load_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;.md&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="n">md</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="k">yield</span> <span class="n">md</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">_source_folder</span> <span class="o">=</span> <span class="s1">&#39;./source/&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">load_folder</span><span class="p">(</span><span class="n">_source_folder</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="n">html</span> <span class="o">=</span> <span class="n">markdown_to_html</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">save_html</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+</span></span></code></pre></div><h3 id="渲染标签页">渲染标签页</h3>
+<p>如果想要渲染标签页或者是首页，我们就需要一个存储所有文章的<code>list</code>。当然只需要存
+放<code>meta</code>里的标题，标签，分类等信息就好了。有了这个 list，我们就可以获得我们需要
+的标签索引和分类索引信息了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">markdown_to_html</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="c1"># 解析meta获得信息</span>
+</span></span><span class="line"><span class="cl">		<span class="n">data</span> <span class="o">=</span> <span class="n">parse_meta</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="n">update_post_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">_posts</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">update_post_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="n">generate_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.html&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">generate_file</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_posts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">render_tag_posts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">render_cate_posts</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;category&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">    <span class="n">render_index_html</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">render_tag_posts</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">render_cate_posts</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">render_index_html</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span></code></pre></div><p>我们设置<code>_posts</code>为存放数据的 list。<code>update_post_data(file, data)</code>函数接收的
+<code>data</code>参数就是解析<code>meta</code>数据得到的<code>data</code>。我们加入一条<code>html</code>文件存放的文件名，
+好让我们在路由调用的时候好索引到他们。</p>
+<p>后面调用的几个函数是在文章数据 list 发生变化时，就调用他们更新对应页面。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">render_tag_posts</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">	渲染一个标签下所有文章
+</span></span></span><span class="line"><span class="cl"><span class="s2">	:param tag: 这是一个标签列表
+</span></span></span><span class="line"><span class="cl"><span class="s2">	&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">tag_posts</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_posts</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tag&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">				<span class="n">tag_posts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">				<span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="s2">&#34;./quiet/templates&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">				<span class="n">template</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s1">&#39;tag.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	            <span class="n">html</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">posts</span><span class="o">=</span><span class="n">tag_posts</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">tag</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	                <span class="n">title</span><span class="o">=</span><span class="s1">&#39;标签: &#39;</span> <span class="o">+</span> <span class="n">t</span>
+</span></span><span class="line"><span class="cl">	            <span class="p">)</span>
+</span></span><span class="line"><span class="cl">	            <span class="n">filename</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="s1">&#39;.html&#39;</span>
+</span></span><span class="line"><span class="cl">	            <span class="n">save_html</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">html</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">tag_posts</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span></code></pre></div><p>这一段很好理解，就是实现的很蠢了。判断标签是不是在文章的标签列表里，如果在，那
+么文章就是该标签的文章，将他放入<code>tag_post</code>列表，并且渲染页面。</p>
+<p>分类页和首页的渲染同理，不去过多赘述，相信小伙伴自己可以搞定。如有偷懒的小伙伴
+可以直接查看项目源码：<a href="https://github.com/Blackyukun/quiet">quiet</a>。</p>
+<h3 id="存储数据">存储数据</h3>
+<p>静态博客不需要进行数据库的交互，但是一直将博客的文章索引信息保存在本地列表中，
+不是好的选择。幸运的是，<code>python</code>的内置模块<code>shelve</code>为我们提供了简单的数据存储方
+案。这个库接收一个文件名作为存储数据的对象，相当于一个字典类型，帮我们保存需要
+保存的数据，然后关闭它：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; import shelve
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dat = shelve.open(&#39;index.dat&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dat[&#39;tag&#39;] = [&#39;音乐&#39;,&#39;电影&#39;,&#39;书籍&#39;]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dat[&#39;tag&#39;]
+</span></span><span class="line"><span class="cl">[&#39;音乐&#39;,&#39;电影&#39;,&#39;书籍&#39;]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dat.close()
+</span></span></code></pre></div><p>调用数据：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data = shelve.open(&#39;index.dat&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data[&#39;tag&#39;]
+</span></span><span class="line"><span class="cl">[&#39;音乐&#39;,&#39;电影&#39;,&#39;书籍&#39;]
+</span></span></code></pre></div><p>我们用它来存放博客数据：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dump_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">dat</span> <span class="o">=</span><span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;./quiet/static/blog.dat&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;post_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_posts</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;tag_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;category_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dat</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></span></code></pre></div><p>标签数据和分类数据大家自己在我们代码的合适位置，去实现一个存放标签和分类的数据
+列表。其实很容易，以标签数据为例。只要在每个文件存放到文章列表前，获得该文件
+<code>meta</code>信息的标签数据。判断此标签是否在标签列表中，如不在，保存它，如在则该标签
+键对应的文章列表添加该文章：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">update_tags</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">post_title</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="n">_tags</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">_tags</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">group</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">group</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">            <span class="n">group</span><span class="p">[</span><span class="s1">&#39;post_title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">post_title</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">elif</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">index</span> <span class="o">=</span> <span class="n">tags</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">_tags</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;post_title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">post_title</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">render_tag_html</span><span class="p">()</span> <span class="c1"># 渲染标签页</span>
+</span></span></code></pre></div><h3 id="优化">优化</h3>
+<p>上面的代码中很多我们定义的变量，如<code>_post</code>，<code>_source_folder</code>等，我们需要将他们放
+到配置文件<code>config.py</code>中去，导入到程序中来。这样便于管理程序。</p>
+<p>对于生成<code>html</code>静态文件功能的程序，我们可以将他分装起来：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># generate.py</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Generate</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="bp">self</span><span class="o">.</span><span class="n">_generated_folder</span> <span class="o">=</span> <span class="n">GENERATED_PATH</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_post_folder</span> <span class="o">=</span> <span class="n">POST_PATH</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_page_folder</span> <span class="o">=</span> <span class="n">PAGE_PATH</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_posts</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">markdown_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    	<span class="bp">self</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+</span></span></code></pre></div><h2 id="模板">模板</h2>
+<p>我们来写一些博客基本的<code>html</code>结构模板：</p>
+<p>继承模版<code>base.html</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;zh-cmn-hans&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{% if title %}{{ title }}{% else %}Quiet{% endif %} - 安静
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	{% block head %}
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../static/images/favicon.ico&#34;</span> 
+</span></span><span class="line"><span class="cl"><span class="na">type</span><span class="o">=</span><span class="s">&#34;image/x-icon&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../static/images/favicon.ico&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;image/x-
+</span></span></span><span class="line"><span class="cl"><span class="s">icon&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../static/css/blog.css&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	{% endblock %}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;header&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-container&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-nav&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-logo&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;float-left&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">						Quiet 个人博客
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;nav float-right&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/&#34;</span><span class="p">&gt;</span>首页<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/categories&#34;</span><span class="p">&gt;</span>分类<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/tags&#34;</span><span class="p">&gt;</span>标签<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/page/about&#34;</span><span class="p">&gt;</span>关于<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-wrapper&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-content&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">h1</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-title&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">						{% block header_title %}
+</span></span><span class="line"><span class="cl">						{% endblock %}
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					{% block data %}{% endblock %}
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;underline&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-subtitle&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">						{% block header_subtitle %}
+</span></span><span class="line"><span class="cl">						{% endblock %}
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;main&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;main-container&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			{% block content %}
+</span></span><span class="line"><span class="cl">        	{% endblock %}
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;footer&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;footer-container&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				©2018 <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;#&#34;</span><span class="p">&gt;</span>Quiet<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span> 基于 flask 框架的 
+</span></span><span class="line"><span class="cl">quiet 构建
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">				<span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;#&#34;</span><span class="p">&gt;</span>备案号<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">			<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>首页模板<code>index.html</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">{% extends &#34;base.html&#34; %}
+</span></span><span class="line"><span class="cl">{% block head %}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;shortcut icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../../../static/images/favicon.ico&#34;</span> 
+</span></span><span class="line"><span class="cl"><span class="na">type</span><span class="o">=</span><span class="s">&#34;image/x-icon&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;icon&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../../../static/images/favicon.ico&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;image/x-icon&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../../../static/css/blog.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../../../static/lib/fontello.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;../../../static/lib/pygments/default.css&#34;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{% block header_title %}
+</span></span><span class="line"><span class="cl">{{ data.title }}
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{% block data %}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;header-date&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;post-time&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;demo-icon icon-calendar&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span> 发表于{{ data.datetime }}
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;post-category&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;demo-icon icon-folder-empty&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span> 分类：
+</span></span><span class="line"><span class="cl">        <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/category/{{ data.category }}&#34;</span><span class="p">&gt;</span>{{ data.category }}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{% block header_subtitle %}
+</span></span><span class="line"><span class="cl">{% if data.tag %}
+</span></span><span class="line"><span class="cl">{% for tag in data.tag %}
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/tag/{{tag}}&#34;</span><span class="p">&gt;&lt;</span><span class="nt">i</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;demo-icon icon-tags&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">i</span><span class="p">&gt;</span> {{ tag }}<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">{% endfor %}
+</span></span><span class="line"><span class="cl">{% endif %}
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">{% block content %}
+</span></span><span class="line"><span class="cl">{{ article }}
+</span></span><span class="line"><span class="cl">{% endblock %}
+</span></span></code></pre></div><p>其他模板类似。其中<code>favicon.ico</code>是站点图标，<code>blog.css</code>是博客的样式，
+<code>fontello.css</code>是引入的一个矢量图标 css 库，<code>default.css</code>是<code>pygments</code>库生成的代
+码高亮样式。</p>
+<h2 id="路由">路由</h2>
+<p>静态博客的路由实现起来就很简单了，只要将对应的静态资源返回就可以了。返回静态资
+源，我在之前的文章中提到过，大家可以看看[这里]
+(<a href="https://www.yukunweb.com/2017/12/flask-web-sitemap/">https://www.yukunweb.com/2017/12/flask-web-sitemap/</a>)。使用的是<code>flask</code>的
+<code>send_from_directory</code>方法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># quiet/main.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">send_from_directory</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">app</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;首页&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/index.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/tags&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">tag</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;标签页&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/tags.html&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/categories&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">category</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;分类页&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/tag/&lt;tag&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">tag_post</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="s2">&#34;&#34;&#34;tag标签所有文章索引页&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="s1">&#39;generated/</span><span class="si">{tag}</span><span class="s1">.html&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;post&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">post</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">	<span class="k">pass</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span></code></pre></div><p>我们将实例<code>Flask</code>应用放入<code>__init__.py</code>中：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># quiet__init__.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">generate</span> <span class="kn">import</span> <span class="n">Generate</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">gen</span> <span class="o">=</span> <span class="n">Generate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">main</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里注册蓝本</span>
+</span></span></code></pre></div><h3 id="上传文件">上传文件</h3>
+<p>严格地说，上传文件的路由并不会暴露给所有人，这样所有人都可以上传自己的<code>md</code>文
+件，那还得了。所以上传文件的路由只会让管理员访问，进入上传页会被程序判断是否是
+管理员，如是就进入上传页，如不是，就跳转到管理员登录页。这个功能如果不想麻烦自
+己写个装饰器的话，就老老实实的用<code>flask-login</code>扩展。</p>
+<p>对于管理员登录路由我这里不去赘述，大家可以自己实现或者直接查看<a href="https://github.com/Blackyukun/quiet">quiet</a>。</p>
+<p>我们将管理员蓝本注册到<code>__init__.py</code>中去：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># quiet/__init__.py</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里注册蓝本</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.admin</span> <span class="kn">import</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">admin</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>上传路由：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">imprt</span> <span class="n">os</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">gen</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">admin</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@admin.route</span><span class="p">(</span><span class="s1">&#39;/upload/post&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@login_required</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">upload_post</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    支持用户上传 md 文件并生成 html
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">source_folder</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;POST_PATH&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">file</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">filename</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">filename</span>
+</span></span><span class="line"><span class="cl">        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">file</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 生成 html</span>
+</span></span><span class="line"><span class="cl">        <span class="n">gen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;upload_post.html&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&#34;上传文章&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>上传<code>html</code>页面大家自己完成，只需要一个上传表单就可以了。</p>
+<p>文件的上传操作可以查看文档：<a href="http://docs.jinkan.org/docs/flask/patterns/fileuploads.html">here</a></p>
+<p><code>flask</code>的<code>reauest</code>方法接收管理员上传文章，并且保存到存放<code>md</code>文件的文件夹。然后
+调用分装好的<code>Generate</code>类，生成保存并且渲染<code>html</code>页面资源。</p>
+<h2 id="博客api索引">博客api索引</h2>
+<p>如果想要实现<code>restful</code>应用架构，就用到我们保存的<code>blog.dat</code>数据了。使用<code>flask</code>做
+api 实在是很简单的，但是我们需要先封装一下载入数据获取索引信息的类：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># utils.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">shelve</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">BLOG_DAT</span> <span class="c1"># 保存索引信息的文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ImportData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    载入 shelve 保存的博客数据
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">_data</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@classmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_load_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;载入数据&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">data</span> <span class="o">=</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BLOG_DAT</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">cls</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@classmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;获取数据&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">cls</span><span class="o">.</span><span class="n">_load_data</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@classmethod</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">reload_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;重新载入数据&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">cls</span><span class="o">.</span><span class="n">_load_data</span><span class="p">()</span>
+</span></span></code></pre></div><p><code>@classmethod</code>是用来指定一个类的方法为类方法，调用他可以直接使用：
+<code>ImportData.get_data()</code>来返回一个字典数据。而不需要实例一个对象来调用。</p>
+<h3 id="api路由">api路由</h3>
+<p>首先需要注册蓝本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># quiet/__init__.py</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">main</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里注册蓝本</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">api</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">.admin</span> <span class="kn">import</span> <span class="n">admin</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">api</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/api&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">admin</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><p>api 路由：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">ImportData</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">api</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/posts&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_posts</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    所有文章信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    :return: json
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">ImportData</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;post_data&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/post/&lt;int:id&gt;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_post</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    指定 id 文章信息
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ImportData</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;post_data&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;没有数据&#39;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@api.route</span><span class="p">(</span><span class="s1">&#39;/pages&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_pages</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    所有页面
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">ImportData</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;page_data&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span></code></pre></div><p><code>flask</code>的<code>jsonify</code>方法可以很简单的将字典数据格式化为<code>json</code>数据，返回给客户端。</p>
+<h2 id="大功告成">大功告成</h2>
+<p>到这里，静态博客的大部分功能都已经完成了，剩下来的就是运行程序了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># run.py</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">quiet</span> <span class="kn">import</span> <span class="n">app</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">generate</span> <span class="kn">import</span> <span class="n">Generate</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gen</span> <span class="o">=</span> <span class="n">Generate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gen</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></span></code></pre></div><p>先生成静态资源，接着启动<code>flask</code>程序。这时候访问：<code>127.0.0.1:5000</code>就可以看到博客
+效果了。由于上面我并没有写<code>css</code>样式，所以样式可以基于大家的喜好，文章的扩展大家
+也可以基于喜好自行扩展。</p>
+<p>如果大家对整体逻辑或者是代码不明白的可以查看项目：<a href="https://github.com/Blackyukun/quiet">quiet</a></p>
+<p>如果喜欢不妨<em><strong>star</strong></em>，如果有建议不妨<em><strong>fork</strong></em>给我提<code>PR</code>。</p>
+<p>祝大家早日找到对象QAQ~。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/web%E5%BC%80%E5%8F%91/">web开发</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/flask/">flask</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

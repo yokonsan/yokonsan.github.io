@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>理解Python的Web开发 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="因为python代码的优雅美观且易于维护这一特点，越来越多的人选择使用Python做Web开发。而Python的Web框架百花齐放，目前比较流行的框架有大包大揽的Django，小巧灵活的Flask、B" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/2/understand-python-web/'>理解Python的Web开发</a></h2>
+                        <span class="date">2018.02.01</span>
+                    </div>
+                    <div class="post_content markdown"><p>因为<code>python</code>代码的优雅美观且易于维护这一特点，越来越多的人选择使用<code>Python</code>做Web开发。而<code>Python</code>的<code>Web</code>框架百花齐放，目前比较流行的框架有大包大揽的<code>Django</code>，小巧灵活的<code>Flask</code>、<code>Bottle</code>，还有性能高效的异步框架<code>Tornado</code>、<code>sanic</code>。这么多框架只要选择一个，阅读他的文档，就可以很轻松的搭建一个<code>web app</code>，完全不需要去管他实现的原理。</p>
+<p>本篇文章意在对一个web开发做一个梳理。</p>
+<h2 id="前端网页三剑客">前端网页三剑客</h2>
+<p>我们打开浏览器输入一个网址<code>yukunweb.com</code>，然后就看到了浏览器给我们显示的页面，这个时候打开浏览器开发者工具，点击<code>Network</code>，刷新页面，会看到下方的请求的<code>url</code>，点击<code>Response</code>，就可以看到服务器返回给浏览器的<code>html</code>文件信息了。如果复制<code>Response</code>响应的内容，保存为<code>index.html</code>并且在浏览器打开，依然可以看到首页的内容，但是似乎缺少了一些页面的样式和功能。</p>
+<p>这是因为当浏览器接收到首页的<code>HTML</code>源码后，它会根据<code>HTML</code>的规则去显示页面，然后再根据<code>HTML</code>里的链接，自动发送HTTP请求给服务器，拿到相应的图片，和<code>JavaScript</code>、<code>CSS</code>等资源，最终显示出一个完整的页面。所以我们会在<code>Network</code>下面能看到很多额外的以<code>.js</code>，<code>.css</code>等后缀的请求了。</p>
+<p><img src="/image/post28/post28_1.jpg" alt="post28_1.jpg"></p>
+<p>其实我们看到的页面就是浏览器按照<code>HTML</code>的规则，展示给我们的。<code>HTML</code>告诉浏览器那里是导航，那里是主栏，那里是侧栏。而这些信息如何显示，或者是显示的样式，就是<code>CSS</code>文件的功劳。至于比如导航的下拉隐藏上拉显示就是<code>JavaScript</code>的作用。</p>
+<p>如果想要做Web开发，就一定得熟悉<code>HTML</code>、<code>CSS</code>、<code>JavaScript</code>三剑客的知识，这里推荐<strong>W3school</strong>的前端教程，也是我学习前端的地方：<a href="http://www.w3school.com.cn/">W3school</a></p>
+<h2 id="客户端和服务器通信">客户端和服务器通信</h2>
+<p>理解了前段三剑客，就知道如何去写一个网页。那么从我们在浏览器的地址栏输入<code>URL</code>，到<code>Web</code>页面呈现出来到底经历了什么。</p>
+<p><img src="/image/post28/post28_2.jpg" alt="post28_2.jpg"></p>
+<p>如图，一般这种通过发送请求获取服务器资源的Web浏览器，都可以称为客户端(client)。首先发送一个请求(request)给服务器，大多是以GET请求方式访问，服务器接收到你的请求，然后取到请求的资源，返回给客户端。</p>
+<p>服务器和客户端之间交流是怎么进行的呢，服务器是怎么理解客户端的请求的呢。这里就需要一种协议规范，就是HTTP(HyperText Transfer Protocol，超文本传输协议)。可以说，<code>Web</code>是建立在<code>HTTP</code>协议上通信的。</p>
+<p><img src="/image/post28/post28_3.jpg" alt="post28_3.jpg"></p>
+<p>如图，仍然是之前的例子，打开浏览器访问<code>yukunweb.com</code>，打开浏览器开发者工具，点击图中标记的选项卡(记得点view parsed)，可以看到客户端发给服务器的请求头前两行。</p>
+<pre><code>GET / HTTP/1.1
+Host: www.yukunweb.com
+</code></pre>
+<p>第一行开头的GET表示请求访问服务器的类型，称为方法(method)。随后的字符<code>/</code>指明了请求访问的资源对象，即请求URI。最后的<code>HTTP/1.1</code>，即HTTP的版本号，用来提示客户端使用的<code>HTTP</code>协议功能。</p>
+<p>综上所述，第一行请求内容的意思是：请求访问某台<code>HTTP</code>服务器上的<code>/</code>(首页)页面资源。所以第二行的<code>Host</code>表示请求的域名也就是服务器所在地址。</p>
+<p><img src="/image/post28/post28_4.jpg" alt="post28_4.jpg"></p>
+<p>如图，如果是<code>POST</code>请求的话，不仅会有请求头部信息，还有一个<code>Form Data</code>的请求实体内容。</p>
+<p>接收到请求的服务器呢，他会将请求内容的处理结果以响应的形式返回，看图中的第一行：</p>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+<p>开头的部分仍然是服务器对应的<code>HTTP</code>版本，紧接着的<code>200 OK</code>表示请求的处理结果的状态码 (status code) 和原因短语。<code>200</code>状态码就表示响应成功，常见的<code>404</code>表示访问错误，<code>500</code>表示服务器响应错误。这里的<code>OK</code>是没有固定的规则的，你也可以让他返回<code>GOOD</code>啥的。</p>
+<p>下一行是服务器信息，本站用的是<code>Nginx</code>服务器，在下一行显示了创建响应的日期时间。在下一行的<code>Content-Type</code>表示内容的类型，客户端会依赖他判断响应的内容是网页还是音频，图片等类型。</p>
+<p>这里只是简单的介绍了<code>HTTP</code>协议，即是客户端与服务器之间的通信协议。如果想要深入了解推荐阅读《HTTP权威指南》。</p>
+<h2 id="wsgi">WSGI</h2>
+<p>如果你浏览一个地址<code>http://www.yukunweb.com/search-result/?keywords=音乐</code>，你会访问到本站的音乐关键词的搜索结果。我们知道客户端发送请求给服务器，那么服务器是怎么拿到资源的呢。其实这是交给后端运行的应用返回的，好比你抓取一个页面到获取到信息，这些逻辑的处理肯定是我们的程序再跑。</p>
+<p>但是，接收并且解析客户端的<code>HTTP</code>请求在发送<code>HTTP</code>响应这些底层操作，后端的程序肯定是不会去处理的。所以，要想只专注于Web业务逻辑，还需要一个服务器和<code>web</code>应用之间的嫁接层————WSGI。</p>
+<h3 id="什么是wsgiweb-server-gateway-interface">什么是WSGI(Web Server Gateway Interface)？</h3>
+<p><code>WSGI</code>翻译过来就是Web服务器网关接口。他只是一个规范，定义了<code>Web</code>服务器如何与<code>Python</code>应用程序进行交互，使得使用<code>Python</code>写的<code>Web</code>应用程序可以和Web服务器(nginx/apache)对接起来。</p>
+<p>该规范的地址：<a href="https://www.python.org/dev/peps/pep-0333/">PEP 333</a></p>
+<p><code>WSGI</code>是<code>Python</code>的Web开发的基石，有了它你就有了一切，它存在的目的有两个：</p>
+<ul>
+<li>描述 Web 服务器如何与 Web 应用程序交互（将客户端请求传给应用程序），</li>
+<li>描述 Web 应用程序如何处理请求和如何返回数据给服务器。</li>
+</ul>
+<p>由于<code>Python</code>内置的标准库里有一个<code>WSGI</code>库<code>wsgiref</code>，我们基于他来写一个体现<code>WSGI</code>目的的例子：</p>
+<pre><code>from wsgiref.simple_server import make_server
+
+def application(environ, start_response):
+	status = '200 OK'
+	response_headers = [('Content-type', 'text/html')]
+	start_response(status, response_headers)
+	body = '&lt;h1&gt;Hello, {name} !!!&lt;/h1&gt;'.format(name=environ['PATH_INFO'][1:] or 'WSGI')
+	return [body.encode('utf-8')]
+
+app = make_server('', 8000, application)
+app.serve_forever()
+</code></pre>
+<p>运行程序，如果没有报错，此时打开浏览器输入地址<code>127.0.0.1:8000</code>和<code>127.0.0.1:8000/GuTianle</code>，就可以看到程序返回的页面了。如图：</p>
+<p><img src="/image/post28/post28_5.jpg" alt="post28_5.jpg"></p>
+<p>我们可以看到一个请求，他的入口只需要一个<code>WSGI</code>的处理函数。因为所有的请求信息都包含在<code>environ</code>中，这样我们就可以根据这些信息去返回不同的数据。</p>
+<p>参数：</p>
+<ul>
+<li>environ：字典类型，存放了所有和客户端相关的信息。如果想知道他里面有哪些参数，可以更改上面的代码在 return 行上面加一个<code>for k, v in environ.items()</code>的循环，打印出字典里的所有参数。</li>
+<li>start_response：一个可调用对象，接收两个必选参数和一个可选参数:
+<ul>
+<li>status: 一个字符串，表示 HTTP 响应状态字符串，如 200，404</li>
+<li>response_headers: 一个列表，包含有如下形式的元组：(header_name, header_value)，用来表示 HTTP 响应的 headers ，如(&lsquo;Content-type&rsquo;, &rsquo;text/html&rsquo;)</li>
+<li>exc_info（可选）: 用于出错时，服务器需要返回给浏览器的信息</li>
+</ul>
+</li>
+</ul>
+<p>返回：一个可迭代对象, 服务器通过遍历这个可迭代对象可以获得body的全部内容，内容可以是<code>html</code>也可以是<code>json</code>。</p>
+<p>这里简单的介绍了<code>WSGI</code>是什么，干什么。如果理解了<code>WSGI</code>，那么写一个<code>Python</code>的Web框架就很简单了。这也是为什么<code>Python</code>有成百上千web框架的原因。</p>
+<h2 id="实现基于wsgi的框架">实现基于WSGI的框架</h2>
+<p>上面我们理解了<code>WSGI</code>是干什么的，那么我们基于它实现一个简单的<code>web</code>框架可以说轻而易举了。</p>
+<pre><code>from wsgiref.simple_server import make_server
+
+class Application(object):
+
+	def __init__(self, environ, start_response):
+		self.start_response = start_response
+		self.path = environ['PATH_INFO']
+
+	def __iter__(self):
+		if self.path == '/':
+			status = '200 OK'
+			response_headers = [('Content-type', 'text/html')]
+			self.start_response(status, esponse_headers)
+			yield '&lt;h1&gt;Hello,World!&lt;/h1&gt;'.encode('utf-8')
+
+		elif self.path == '/wsgi':
+			status = '200 OK'
+			response_headers = [('Content-type', 'text/html')]
+			self.start_response(status, response_headers)
+			yield '&lt;h1&gt;Hello,WSGI!&lt;/h1&gt;'.encode('utf-8')
+
+		else:
+			status = '404 NOT FOUND'
+			response_headers = [('Content-type', 'text/html')]
+			self.start_response(status, response_headers)
+			yield '&lt;h1&gt;404 NOT FOUND&lt;/h1&gt;'.encode('utf-8')
+
+if __name__ == &quot;__main__&quot;:
+	app = make_server('127.0.0.1', 8000, Application)
+	print('Serving HTTP on port 8000...')
+	app.serve_forever()
+</code></pre>
+<p>这个<code>Application</code>类只不过是对<code>WSGI</code>又做了一层简单的封装而已，由于上面说过<code>WSGI</code>函数返回的是一个可以迭代对象，所以需要实现一个__iter__方法，里面控制了客户端的请求路由并且返回不同的输出。</p>
+<p>当然如果你想扩展成一个像样的框架还需要考虑很多，比如像<code>flask</code>那样方便的路由系统，还有对于用户请求方式的处理等等。总之是个很需要折腾的过程，好比<code>flask的0.1</code>版本去掉注释也就 200 多行，而如今最新版本。。。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/web%E5%BC%80%E5%8F%91/">web开发</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

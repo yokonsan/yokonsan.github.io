@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>优雅的写判断语句 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="一个程序之所以能自动做很多任务，是因为我们给他做好了条件判断。项目中，我们难免会使用if/else判断逻辑语句。对简单的情况而言，使用逻辑语句会很清晰简洁，而项目情况一旦复杂，或者判断层次变多，盲目的" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2018/5/write-judgment-sentences-gracefully/'>优雅的写判断语句</a></h2>
+                        <span class="date">2018.05.20</span>
+                    </div>
+                    <div class="post_content markdown"><p>一个程序之所以能自动做很多任务，是因为我们给他做好了条件判断。项目中，我们难免会使用<code>if/else</code>判断逻辑语句。对简单的情况而言，使用逻辑语句会很清晰简洁，而项目情况一旦复杂，或者判断层次变多，盲目的使用<code>if/else</code>语句就不免会显得难看，而且难以维护和扩展。</p>
+<p>比如一个返回今天是什么日子的函数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_today</span><span class="p">(</span><span class="n">today</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Monday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期一&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Tuesday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期二&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Wednesday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期三&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Thursday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期四&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Friday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期五&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Saturday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期六&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">today</span> <span class="o">==</span> <span class="s1">&#39;Sunday&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;星期日&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;其他&#39;</span>
+</span></span></code></pre></div><p>这样写虽然没有问题，但是如果现在要多加一个节日，这样我们就又要在现有逻辑中去加一条<code>elif</code>逻辑语句。这样发展下去，代码不仅排版冗长难看，而且增加了修改逻辑语句的风险。</p>
+<h2 id="表驱动法">表驱动法</h2>
+<p>表驱动法是一种编写代码的策略，对于复杂的判断逻辑，尽量从表里查找信息而不使用逻辑语句。对于上面的代码，我们可以使用表驱动法，改为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">days</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Monday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期一&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Tuesday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期二&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Wednesday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期三&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Thursday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期四&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Friday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期五&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Saturday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期六&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Sunday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期日&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_today</span><span class="p">(</span><span class="n">today</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">today</span> <span class="ow">in</span> <span class="n">days</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">days</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">today</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="s1">&#39;其他&#39;</span>
+</span></span></code></pre></div><p>这样我们实际上就将数据和逻辑分离了，好处是数据和逻辑一目了然，维护和扩展更加简单。如果我们需要再加一个节日，只需要在数据中加，不需要去修改逻辑。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">days</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># ...</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;New Year&#39;</span><span class="p">:</span> <span class="s1">&#39;春节&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="更复杂的嵌套">更复杂的嵌套</h2>
+<p>如果我们现在需要把星期和节日区分开，让他们返回不同的信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">days</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Monday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期一&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Tuesday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期二&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Wednesday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期三&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Thursday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期四&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Friday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期五&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Saturday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期六&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Sunday&#39;</span><span class="p">:</span> <span class="s1">&#39;星期日&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;New Year&#39;</span><span class="p">:</span> <span class="s1">&#39;春节&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;Birthday&#39;</span><span class="p">:</span> <span class="s1">&#39;生日&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_today</span><span class="p">(</span><span class="n">today</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">today</span> <span class="ow">in</span> <span class="n">days</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="n">days</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">today</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;星期&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;星期几：</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">elif</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;节&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;节日：</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="s1">&#39;今天是：</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;其他&#39;</span>
+</span></span></code></pre></div><p>这里我们在<code>if/else</code>中又嵌套了一层判断逻辑，当然这只是一层简单的嵌套，这么写没有问题。而随着项目的演进，功能越来越复杂，如果我们需要在嵌套的逻辑中再加一层嵌套，或者更改这层嵌套逻辑。直接在原有的逻辑中改的话，不免要增大修改的代价和风险。更为重要的是，这对以后的维护和扩展增加了难度。</p>
+<p>编辑复杂的项目时，为了使代码逻辑更清晰，更易读易于维护，我们需要对原有的<code>if/else</code>中的嵌套做一个类的封装，封装一个判断的方法(<code>judge()</code>)以及一个执行行为方法(<code>action()</code>)，它们分别封装了原代码中的<code>if</code>判断和判断后执行的行为。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TodayIsWeek</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">judge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;星期&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># do something</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TodayIsFestival</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">judge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;节&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># do something</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TodayIsOther</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">judge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;星期&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;节&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># do something</span>
+</span></span></code></pre></div><p>对于上面的程序，这么封装肯定是多余的，而如果程序特别复杂，这样做不仅不会显得过度设计，还能让代码结构逻辑更加清晰。我们只需要将上面的封装放到一个表里，遍历它就可以了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_today</span><span class="p">(</span><span class="n">today</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">today</span> <span class="ow">in</span> <span class="n">days</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="n">days</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">today</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 遍历</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TodayIsWeek</span><span class="p">,</span> <span class="n">TodayIsFestival</span><span class="p">,</span> <span class="n">TodayIsOther</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">run</span> <span class="o">=</span> <span class="n">obj</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">run</span><span class="o">.</span><span class="n">judge</span><span class="p">(</span><span class="n">result</span><span class="p">):</span> <span class="k">return</span> <span class="n">run</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="s1">&#39;not in days&#39;</span>
+</span></span></code></pre></div><h2 id="最后">最后</h2>
+<p>在python代码的编写中，我们应该尽量不写过多的逻辑判断嵌套，避免<code>if/else</code>嵌套地狱。对于过于复杂的逻辑判断，尽量对他进行封装，使用表驱动法来分离数据和逻辑，保证可读性同时减少维护代码的成本。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/python/">Python</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo,</a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
