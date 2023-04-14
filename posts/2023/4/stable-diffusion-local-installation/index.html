@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Stable-Diffusion 本地安装部署 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="Stable-Diffusion：一个基于Latent Diffusion Models（潜在扩散模型，LDMs）的文图生成（text-to-image）模型。GitHub开源地址：https://github.com/" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/links/">Links</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                
+                <a href="https://openai.yokonsan.com" title="instagram" target="_blank"><i class="ri-instagram-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2023/4/stable-diffusion-local-installation/'>Stable-Diffusion 本地安装部署</a></h2>
+                        <span class="date">2023.04.09</span>
+                    </div>
+                    <div class="post_content markdown"><p><code>Stable-Diffusion</code>：一个基于Latent Diffusion Models（潜在扩散模型，LDMs）的文图生成（text-to-image）模型。GitHub开源地址：<a href="https://github.com/Stability-AI/stablediffusion">https://github.com/Stability-AI/stablediffusion</a></p>
+<p><code>stable-diffusion-webui</code>：基于 Stable Diffusion 的基础应用，利用 gradio 搭建出的交互程序。
+我们需要部署的就是stable-diffusion-webui。GitHub开源地址：<a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">https://github.com/AUTOMATIC1111/stable-diffusion-webui</a></p>
+<h2 id="环境要求">环境要求</h2>
+<h3 id="网络要求">网络要求</h3>
+<p>安装资源大部分在国内访问速度不佳，建议自备极速方法，或者自行寻找国内镜像加速网站。</p>
+<h3 id="硬件要求">硬件要求</h3>
+<h4 id="内存">内存</h4>
+<p>不少于 16GB。
+要容纳模型文件需要调高虚拟内存。</p>
+<h4 id="存储">存储</h4>
+<p>40GB 以上可用硬盘空间。</p>
+<h4 id="显卡">显卡</h4>
+<p>显存不少于 4GB。
+因为需要 CUDA 加速，所以只有<strong>英伟达显卡</strong>支持良好。（AMD 可用但速度明显慢于英伟达）</p>
+<blockquote>
+<p>[!ERROR] 风险
+过度玩耍（连续 3 天出图），显卡会有坏掉的风险</p>
+</blockquote>
+<h3 id="配置检查">配置检查</h3>
+<h4 id="检查显卡驱动">检查显卡驱动</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">nvidia-smi
+</span></span></code></pre></div><p>判断 CUDA 是否可用。不可用可手动安装。地址：<a href="https://developer.nvidia.com/cuda-11-8-0-download-archive?target_os=Windows&amp;target_arch=x86_64&amp;target_version=11&amp;target_type=exe_local">CUDA</a></p>
+<h4 id="检查-pytorch-是否成功载入-cuda">检查 PyTorch 是否成功载入 CUDA</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+</span></span></code></pre></div><p>输出<code>True</code> 为正常。</p>
+<blockquote>
+<p>[!WARNING] 注意
+torch 版本和 CUDA 版本需要对应。可在 torch 官网查看 torch 版本对应的 CUDA 版本。
+如两者都安装了，但是输出为 False。需要对 CUDA 降级或升级。</p>
+</blockquote>
+<h4 id="查看-torch-对应的-cuda-版本">查看 torch 对应的 CUDA 版本</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="n">torch</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">cuda</span>
+</span></span></code></pre></div><h2 id="安装">安装</h2>
+<h3 id="windows">Windows</h3>
+<ol>
+<li>安装<a href="https://www.python.org/ftp/python/3.10.6/python-3.10.6-amd64.exe">Python 3.10.6</a> ，安装过程中需要勾选添加到PATH，手动把安装目录和pip所在目录添加到环境变量PATH中亦可。</li>
+<li>安装<a href="https://github.com/git-for-windows/git/releases/download/v2.39.2.windows/Git-2.39.2-64-bit.exe">git</a></li>
+<li>挑个安装目录，右击点<code>git bash here</code>，clone 项目到该目录：<code>git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui</code></li>
+<li>双击项目目录下的<code>webui-user.bat</code></li>
+</ol>
+<blockquote>
+<p>[!WARNING] 注意
+安装过程中一些文件下载大约有7个G左右，需要保持硬盘空间充足。</p>
+</blockquote>
+<h4 id="报错安装依赖包异常">报错安装依赖包异常</h4>
+<ol>
+<li>打开 <code>stable-diffusion-webui/launch.py</code> 文件。</li>
+<li>找到 <code>prepare_environment</code> 方法</li>
+<li>在几个 <code>https://github.com</code> 的链接前添加：<code>https://ghproxy.com/</code>。添加后的结果类似这样：<code>https://ghproxy.com/https://github.com/…</code></li>
+<li>保存后继续执行 <code>./webui.sh</code> 就可以了</li>
+</ol>
+<p><img src="/image/post42/post42_1.png" alt="post42_1"></p>
+<h3 id="linux">Linux</h3>
+<ol>
+<li>安装依赖</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Debian-based:</span>
+</span></span><span class="line"><span class="cl">sudo apt install wget git python3 python3-venv
+</span></span><span class="line"><span class="cl"><span class="c1"># Red Hat-based:</span>
+</span></span><span class="line"><span class="cl">sudo dnf install wget git python3
+</span></span><span class="line"><span class="cl"><span class="c1"># Arch-based:</span>
+</span></span><span class="line"><span class="cl">sudo pacman -S wget git python3
+</span></span></code></pre></div><ol start="2">
+<li>加载脚本</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bash &lt;<span class="o">(</span>wget -qO- https://raw.githubusercontent.com/AUTOMATIC1111/stable-diffusion-webui/master/webui.sh<span class="o">)</span>
+</span></span></code></pre></div><hr>
+<p>参考官方安装 <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki">wiki</a></p>
+<h3 id="更新">更新</h3>
+<p>git clone 的源项目，可直接使用<code>git pull</code> 更新代码。</p>
+<h3 id="网络问题">网络问题</h3>
+<p>安装过程中出现：</p>
+<ul>
+<li>形如 <code>Connection timed out</code> 字样</li>
+<li>形如 <code>Connection was Reset</code> 字样</li>
+<li>下载速度极慢</li>
+</ul>
+<p>请设置代理，或者使用__</p>
+<h4 id="设置-pip-镜像">设置 pip 镜像</h4>
+<p>确保安装python时成功安装了pip并已经配置环境变了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">pip -V
+</span></span></code></pre></div><p>设置镜像：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">pip config set global.index-url https://mirrors.bfsu.edu.cn/pypi/web/simple
+</span></span></code></pre></div><h4 id="git-拉取">Git 拉取</h4>
+<p>如果拉去官方仓库速度太慢，可通过<code>https://ghproxy.com/</code>去拉取。
+或者找国内镜像仓库。</p>
+<h3 id="cuda-out-of-memory">CUDA out of memory</h3>
+<p>确保你拥有可以运行的最新 CUDA 工具包和 GPU 驱动程序.</p>
+<p>在具有少量显存 (&lt;=4GB) 的视频卡上运行时，可能会出现内存不足错误。可以通过命令行参数启用各种优化，牺牲一些速度来支持使用更少的 VRAM：</p>
+<p>如果出现显存不足错误，请首先尝试 <code>--medvram</code>;</p>
+<p>如果仍然出现显存不足错误，请改用 <code>--medvram --always-batch-cond-uncond</code>；</p>
+<p>如果依旧出现显存不足错误，请尝试 <code>--lowvram</code>。注意这会让运行速度大幅降低。</p>
+<p>如果还不行….</p>
+<p>建议升级装备。</p>
+<h2 id="启动">启动</h2>
+<p>启动前需确保<code>models/Stable-diffusion</code>文件夹下下载了任意的模型，供服务使用。模型下载地址可选择<a href="https://civitai.com/">CIVITAI</a> 和 <a href="https://huggingface.co/">Hugging Face</a>。网络问题需自行解决。</p>
+<p>Windows 用户编辑运行<code>webui-user.bat</code> 脚本。
+Linux 用户第一次运行执行<code>python launch.py</code>，该脚步会自行安装环境，后面可直接执行<code>python wenui.py</code>。</p>
+<h3 id="第一次尝试">第一次尝试</h3>
+<p>这里我用的模型是<code>cetusix_whalefall</code>。</p>
+<p><img src="/image/post42/post42_2.png" alt="post42_2"></p>
+<p>在第一个输入框中输入我们的 Prompt：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(Hookah:1.2),holding smoking pipe, smoke,flask,girl,a long flexible rubber tube with a smoking pipe,waterpipe smoking,shisha,lethargy,staring into the distance,stained glass,zettai ryouiki, night,
+</span></span></code></pre></div><p>这是我们期望得到的结果，<code>()</code>用于增加权重。</p>
+<p>在第二个输入框中输入我们不希望看到的结果，Negative Prompt：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(worst quality:1.6),(low quality:1.6), easynegative,
+</span></span></code></pre></div><h4 id="调整参数">调整参数</h4>
+<p><img src="/image/post42/post42_3.png" alt="post42_3"></p>
+<p>这里图片尺寸选择 512*768，显存足够大可以选更大的尺寸。
+CFG Scale 表示提示词相关性权重，一般选择 7-9 这样。
+seed 可以直接设置<code>-1</code>表示随机。
+Steps 一般设置 20-30 这样，表示采样迭代步数。
+Sampler 指定采样方法，这里选择<code>DPM++ 2M Karras</code>。</p>
+<p>参数的具体解释，后面文章在说。</p>
+<h3 id="出图">出图</h3>
+<p>当右边开始生成图片时，基本上就成功了。我们只需要等待图片生成结束即可。</p>
+<p><img src="/image/post42/post42_4.png" alt="post42_4"></p>
+<h2 id="最后">最后</h2>
+<p>图片出来后，我们的本地化安装就完成了。但是还有些问题需要解决：</p>
+<ul>
+<li>SD-WebUI 中文本地化</li>
+<li>SD-WebUI 实例共享</li>
+<li>SD-WebUI 参数详解</li>
+</ul>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/">AI绘画</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/stablediffusion/">StableDiffusion</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo | </a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo | </a>
+        <a href="https://beian.miit.gov.cn/">苏ICP备17028833号-3</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>

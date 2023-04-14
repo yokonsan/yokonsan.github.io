@@ -2,6 +2,41 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/posts/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/tags/stablediffusion/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/tags/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/posts/2023/4/data-analysis-of-c-station/</loc>
+    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/posts/2023/4/stable-diffusion-local-installation/</loc>
+    <lastmod>2023-04-09T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://yokonsan.com/about/</loc>
     <lastmod>2023-01-01T14:04:12+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -9,21 +44,6 @@
   </url><url>
     <loc>https://yokonsan.com/links/</loc>
     <lastmod>2023-01-01T14:04:12+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://yokonsan.com/posts/</loc>
-    <lastmod>2021-02-11T14:05:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://yokonsan.com/tags/</loc>
-    <lastmod>2021-02-11T14:05:37+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://yokonsan.com/</loc>
-    <lastmod>2021-02-11T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>

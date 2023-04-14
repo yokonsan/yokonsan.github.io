@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>StableDiffusion on 乾之 三爻</title>
+    <link>https://yokonsan.com/tags/stablediffusion/</link>
+    <description>Recent content in StableDiffusion on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 13 Apr 2023 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/stablediffusion/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>对C站18万AI绘画的图片数据分析后</title>
+      <link>https://yokonsan.com/posts/2023/4/data-analysis-of-c-station/</link>
+      <pubDate>Thu, 13 Apr 2023 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.com/posts/2023/4/data-analysis-of-c-station/</guid>
+      <description>项目源码：https://github.com/yokonsan/civitai-analysis $ find ./data -type f -name &amp;#34;*.txt&amp;#34; -print0 | xargs -0 wc -l | tail -1 181384 total 抓取 C 站 181384 张 SFW 图片数据抓取后，我发现： 玩家最喜欢的模型是chill</description>
+    </item>
+    
+    <item>
+      <title>Stable-Diffusion 本地安装部署</title>
+      <link>https://yokonsan.com/posts/2023/4/stable-diffusion-local-installation/</link>
+      <pubDate>Sun, 09 Apr 2023 14:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.com/posts/2023/4/stable-diffusion-local-installation/</guid>
+      <description>Stable-Diffusion：一个基于Latent Diffusion Models（潜在扩散模型，LDMs）的文图生成（text-to-image）模型。GitHub开源地址：https://github.com/</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>对C站18万AI绘画的图片数据分析后 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="项目源码：https://github.com/yokonsan/civitai-analysis $ find ./data -type f -name &amp;#34;*.txt&amp;#34; -print0 | xargs -0 wc -l | tail -1 181384 total 抓取 C 站 181384 张 SFW 图片数据抓取后，我发现： 玩家最喜欢的模型是chill" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/links/">Links</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                
+                <a href="https://openai.yokonsan.com" title="instagram" target="_blank"><i class="ri-instagram-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2023/4/data-analysis-of-c-station/'>对C站18万AI绘画的图片数据分析后</a></h2>
+                        <span class="date">2023.04.13</span>
+                    </div>
+                    <div class="post_content markdown"><p>项目源码：<a href="https://github.com/yokonsan/civitai-analysis">https://github.com/yokonsan/civitai-analysis</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ find ./data -type f -name <span class="s2">&#34;*.txt&#34;</span> -print0 <span class="p">|</span> xargs -0 wc -l <span class="p">|</span> tail -1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">181384</span> total
+</span></span></code></pre></div><p>抓取 <a href="https://civitai.com/images">C 站</a> 181384 张 <code>SFW</code> 图片数据抓取后，我发现：</p>
+<ul>
+<li>玩家最喜欢的模型是<code>chilloutmix_NiPrunedFp32Fix</code>[<code>fc2511737a</code>]</li>
+<li>玩家最常用的正向提示词是<code>masterpiece</code>、<code>best quality</code>、<code>1girl</code>、<code>solo</code></li>
+<li>玩家最常用的反向提示词是<code>blurry</code>、<code>low quality</code>、<code>bad anatomy</code></li>
+<li>玩家生成图片尺寸最多的是<code>512x768</code>，其次是默认的<code>512x512</code></li>
+<li>玩家采样步数使用最多的是<code>20</code></li>
+<li>玩家采样器使用最多的是<code>DPM++ 2M Karras</code>，其次是默认的<code>Euler a</code></li>
+<li>玩家无分类指导规模值使用最多的是<code>7</code></li>
+</ul>
+<p>另外，我粗略的统计了指令中出现<code>girl</code>和<code>boy</code>的次数，然后出现<code>girl</code> 64251 次，出现<code>boy</code> 12053 次，只占了 6.4%。dddd xdm。</p>
+<h2 id="数据抓取">数据抓取</h2>
+<p>下载项目后，执行<code>python main.py</code>可抓取 C 站数据。另外<code>data</code>文件夹下是我已经下载后的数据。数据格式参考<code>_typing.py</code>文件。</p>
+<p>我只写了下载图片 meta 信息，并没有对图片进行下载。需要下载图片的可自行编辑。</p>
+<h2 id="数据分析">数据分析</h2>
+<p>数据分析部分，就是单纯的统计每一项的次数，没有其他分析。代码参考<code>analysis.py</code>。</p>
+<p>本次分析的数据都是<code>SFW</code>的数据，不包括<code>NSFW</code>。至于两个是什么区别呢，通俗易懂的解释是：</p>
+<ul>
+<li><code>SFW</code>是适合在工作场所浏览的内容；</li>
+<li><code>NSFW</code>是平台不让说的内容</li>
+</ul>
+<h3 id="model">Model</h3>
+<p><img src="/image/post43/top10_model.png" alt="top10_model.png">
+<a href="https://huggingface.co/naonovn/chilloutmix_NiPrunedFp32Fix">chilloutmix_NiPrunedFp32Fix</a>主要是针对亚洲网红脸训练的真人模型。也是我个人经常用的模型。
+<a href="https://civitai.com/models/4823/deliberate">deliberate</a> 模型提供了创建任何你想要的东西的能力。</p>
+<h3 id="sampler">Sampler</h3>
+<p><img src="/image/post43/top10_sampler.png" alt="top10_sampler.png"></p>
+<p>DPM++ 2M Karras 是用的最多的采样器。新手我更推荐<code>Euler a</code>。</p>
+<h3 id="steps">Steps</h3>
+<p><img src="/image/post43/top10_steps.png" alt="top10_steps.png">
+20 是默认的值，这个值一般都是设的 20-30 之间。更大的迭代步数可能会有更好的生成效果，更多细节和锐化，但是也会导致生成时间变长。</p>
+<h3 id="size">Size</h3>
+<p><img src="/image/post43/top10_size.png" alt="top10_size.png">
+尺寸太宽时，图中可能会出现多个主体。一般都是用的<strong>小尺寸+高清修复</strong>。更大的尺寸也需要更多的显存。</p>
+<h3 id="cfgscale">CfgScale</h3>
+<p><img src="/image/post43/top10_cfg_scale.png" alt="top10_cfg_scale.png">
+<code>cfg scale</code>  值越高，提示词对最终生成结果的影响越大，契合度越高。一般都是 6.5-8 之间。</p>
+<h3 id="prompt">Prompt</h3>
+<p><img src="/image/post43/top10_prompt.png" alt="top10_prompt.png">
+正向指令前两个都是画质相关的，<code>1girl</code>第三是我没有想到的。<code>1boy</code>太惨淡了。。。</p>
+<p><img src="/image/post43/top10_negative_prompt.png" alt="top10_negative_prompt.png"></p>
+<h4 id="提示词词云">提示词词云</h4>
+<p><img src="/image/post43/output.png" alt="output.png"></p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/">AI绘画</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/stablediffusion/">StableDiffusion</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo | </a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo | </a>
+        <a href="https://beian.miit.gov.cn/">苏ICP备17028833号-3</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
