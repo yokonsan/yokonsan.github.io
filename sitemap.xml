@@ -3,27 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/</loc>
-    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/posts/</loc>
-    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/posts/2023/4/stable-diffusion-service-share/</loc>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/tags/stablediffusion/</loc>
-    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/tags/</loc>
-    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/</loc>
-    <lastmod>2023-04-13T14:05:37+08:00</lastmod>
+    <lastmod>2023-04-15T14:05:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
