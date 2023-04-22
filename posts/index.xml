@@ -6,7 +6,16 @@
     <description>Recent content in Posts on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 15 Apr 2023 14:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Apr 2023 10:05:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何白嫖 Stable-Diffusion 服务</title>
+      <link>https://yokonsan.com/posts/2023/4/free-use-stable-diffusion-service/</link>
+      <pubDate>Sat, 22 Apr 2023 10:05:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.com/posts/2023/4/free-use-stable-diffusion-service/</guid>
+      <description>最近一直有朋友问我，自己设备配置不行怎么使用 Stable-Diffusion，问我有没有共享的 Stable-Diffusion AI 绘画服务能体验一下，付费也行。说实话听到付费我确实心动了，但我的机器作一次图30s起步，而付费的云服务</description>
+    </item>
+    
     <item>
       <title>Stable-Diffusion 中文自部署服务共享</title>
       <link>https://yokonsan.com/posts/2023/4/stable-diffusion-service-share/</link>

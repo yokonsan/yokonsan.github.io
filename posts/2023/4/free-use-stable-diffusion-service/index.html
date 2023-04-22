@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>如何白嫖 Stable-Diffusion 服务 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="最近一直有朋友问我，自己设备配置不行怎么使用 Stable-Diffusion，问我有没有共享的 Stable-Diffusion AI 绘画服务能体验一下，付费也行。说实话听到付费我确实心动了，但我的机器作一次图30s起步，而付费的云服务" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/links/">Links</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                
+                <a href="https://openai.yokonsan.com" title="instagram" target="_blank"><i class="ri-instagram-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2023/4/free-use-stable-diffusion-service/'>如何白嫖 Stable-Diffusion 服务</a></h2>
+                        <span class="date">2023.04.22</span>
+                    </div>
+                    <div class="post_content markdown"><p>最近一直有朋友问我，自己设备配置不行怎么使用 Stable-Diffusion，问我有没有共享的 Stable-Diffusion AI 绘画服务能体验一下，付费也行。说实话听到付费我确实心动了，但我的机器作一次图30s起步，而付费的云服务器动辄一个月4k+，只好抑制住这份心动。</p>
+<p>但是总有办法的。Google colab 就是答案。
+Google colab 地址：https://colab.research.google.com/
+需要玩家自备工具去访问，或者找朋友帮忙操作，启动后 gradio 的地址可直接访问。</p>
+<h2 id="新建-notebook">新建 Notebook</h2>
+<p><img src="/image/post45/post45_1.png" alt="post45_1.png"></p>
+<p>打开 colab 后新建笔记本，我们点击右上角的连接按钮。</p>
+<p><img src="/image/post45/post45_2.png" alt="post45_2.png"></p>
+<p>然后点击底部 <strong>更改运行时类型</strong> 选择 GPU 保存。</p>
+<p><img src="/image/post45/post45_3.png" alt="post45_3.png"></p>
+<p>查询 GPU 资源</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">psutil</span> <span class="kn">import</span> <span class="n">virtual_memory</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ram_gb</span> <span class="o">=</span> <span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span> <span class="o">/</span> <span class="mf">1e9</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Your runtime has </span><span class="si">{:f}</span><span class="s1"> gigabytes of available RAM</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ram_gb</span><span class="p">))</span>
+</span></span></code></pre></div><p><img src="/image/post45/post45_4.png" alt="post45_4.png"></p>
+<p>和 Notebook 的使用方式一样，直接在输入框里输入代码，然后点击左上角按钮执行即可。
+避免重复执行已经执行过的代码，可以点击左上角的【+代码】，添加一个新的代码 cell。</p>
+<p>执行结果输出 <code>Your runtime has 13.6 gigabytes of available RAM</code> 这样的形式，表示当前运行时进程存在 GPU 资源。可以开始我们的操作了。</p>
+<p><strong>注意：</strong></p>
+<ul>
+<li>下文的代码都是在每一个新的代码 cell 中执行，在新的代码 cell 中输入代码块中的代码后，都需要点击左上方执行按钮执行，不在赘述。</li>
+<li>直接复制代码，执行时出现错误，需检查代码的编码是否正确，或者重新输入代码中的每个空格。</li>
+<li>本人的 colab notebook 分享链接会在文末给出，不想看文章的可直接跳到最后 ORZ。</li>
+</ul>
+<h2 id="重启运行时进程">重启运行时进程</h2>
+<p>如果我们选择保存 GPU 资源后，colab 没有自动重新连接资源，可以执行下面的代码，重启进程。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span> <span class="mi">9</span><span class="p">)</span>
+</span></span></code></pre></div><p>这段代码会终止当前运行时进程，该进程将由管理器自动重新启动。</p>
+<h2 id="安装-stable-diffusion-webui">安装 stable-diffusion-webui</h2>
+<p>在新的代码 cell 中输入下面命令，并执行。来安装 stablediffusion-webui 以及相关依赖。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">!git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
+</span></span><span class="line"><span class="cl">%cd stable-diffusion-webui
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 安装依赖环境</span>
+</span></span><span class="line"><span class="cl">!COMMANDLINE_ARGS<span class="o">=</span><span class="s2">&#34;--exit &#34;</span> <span class="nv">REQS_FILE</span><span class="o">=</span><span class="s2">&#34;requirements.txt&#34;</span>  python launch.py
+</span></span></code></pre></div><h2 id="安装模型">安装模型</h2>
+<p>下面的命令以我常用的 <code>chilloutmix_NiPrunedFp32Fix</code> 为例，大家需要什么模型，直接以相同的格式，修改或者新增下载连接和文件名即可。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 下载 chilloutmix_NiPrunedFp32Fix.safetensors
+</span></span><span class="line"><span class="cl">!curl -Lo models/Stable-diffusion/chilloutmix_NiPrunedFp32Fix.safetensors https://civitai.com/api/download/models/11745
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 下载 EasyNegative.pt
+</span></span><span class="line"><span class="cl">!curl -Lo embeddings/EasyNegative.pt https://huggingface.co/datasets/gsdf/EasyNegative/resolve/main/EasyNegative.pt
+</span></span></code></pre></div><h2 id="安装插件">安装插件</h2>
+<p>这里以中文本地化插件为例，大家需要安装 <code>ControlNet </code>等插件，同样以这个下面命令形式下载即可。这里我直接用 <code>git clone</code> 从 GitHub 仓库下载：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">!git clone https://github.com/dtlnor/stable-diffusion-webui-localization-zh_CN.git extensions/stable-diffusion-webui-localization-zh_CN
+</span></span></code></pre></div><p><code>git clone</code> 后面是插件地址，再后面是插件文件夹。</p>
+<h2 id="安装-vae">安装 VAE</h2>
+<p>安装 VAE 以及下面的 Lora 方式和模型一样，大家根据需求来。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 创建VAE文件夹
+</span></span><span class="line"><span class="cl">!mkdir models/VAE
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">!curl -Lo models/VAE/vae-ft-mse-840000-ema-pruned.ckpt https://huggingface.co/dector/vae-840000/resolve/main/vae-ft-mse-840000-ema-pruned.ckpt
+</span></span></code></pre></div><h2 id="安装-lora">安装 Lora</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 创建Lora文件夹
+</span></span><span class="line"><span class="cl">!mkdir models/Lora
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">!curl -Lo models/Lora/hanfu_v30.safetensors https://civitai.com/api/download/models/39043
+</span></span></code></pre></div><h2 id="启动">启动</h2>
+<p>因为用<code>--share</code>参数共享服务，会启用默认的安全保护设置，插件功能会失效。这里带上<code>--enable-insecure-extension-access</code> 参数开启，如果要分享给别人使用，这里需要谨慎些。上篇文章说过 <code>--gradio-auth</code> 参数用于设置前端登录的账户名和密码，需要替换的可自行修改。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 启动</span>
+</span></span><span class="line"><span class="cl">!COMMANDLINE_ARGS<span class="o">=</span><span class="s2">&#34;--share --enable-insecure-extension-access --disable-safe-unpickle --gradio-debug --gradio-auth yokon:yokon666&#34;</span> <span class="nv">REQS_FILE</span><span class="o">=</span><span class="s2">&#34;requirements.txt&#34;</span> python launch.py
+</span></span></code></pre></div><p>大概运行 1 分钟左右，直到 colab 打印了下面这样的日志，就表示启动成功了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Running on local URL: http://127.0.0.1:7860
+</span></span><span class="line"><span class="cl">Running on public URL: https://39793c2bc407de4916.gradio.live
+</span></span></code></pre></div><p>我们在新窗口打开输出的 <code>gradio</code> public URL 地址，输入 <code>yokon/yokon666</code>，就可以愉快的玩耍了。</p>
+<p>**Tips：**这里的链接大家可以分享给好友或者在其他地方使用，本人测试过，即使不使用平台不让说的那种上网方法，也可以正常访问。</p>
+<h2 id="一些设置">一些设置</h2>
+<h3 id="开启中文">开启中文</h3>
+<p>我们安装了中文插件，但是为了更好的体验，仍然需要我们手动设置下。</p>
+<p>顺序点击 <code>setting</code> -&gt; <code>User interface</code> -&gt; <code>Localization</code>，选择<code>zh_CN</code>。</p>
+<p><img src="/image/post45/post45_6.png" alt="post45_6.png"></p>
+<p>然后点击 <code>Apply settings</code>同意设置，在点击<code>Reload UI</code> 重启 UI。这里可能重启后并没有生效，没关系，我们只需要停止启动代码 cell 的执行，然后重新执行即可。</p>
+<h3 id="快捷设置列表">快捷设置列表</h3>
+<p>如果希望生成图界面，可以快速选择 VAE 等设置，可以设置用户界面的快捷设置列表。输入下面的配置（可根据自身需要删减）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sd_model_checkpoint,sd_vae,sd_checkpoint_cache,sd_vae_checkpoint_cache,initial_noise_multiplier,CLIP_stop_at_last_layers,sd_hypernetwork
+</span></span></code></pre></div><p><img src="/image/post45/post45_7.png" alt="post45_7.png"></p>
+<p>和上面插进配置一样，同意设置然后重启 UI，不生效重新执行启动代码 cell。
+效果如下：</p>
+<p><img src="/image/post45/post45_8.png" alt="post45_8.png"></p>
+<h2 id="开始玩耍">开始玩耍</h2>
+<p>一切准备就绪后，我们就可以开始玩耍了。下面我以真人+汉服的风格为例，给大家提供提示词等参数，然后生成图片。</p>
+<h2 id="prompt">Prompt</h2>
+<p>我们在提示词输入框输入（这里我们使用前面安装的 hanfu lora）：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">extremely detailed CG unity 8k wallpaper,(masterpiece),(best quality),(ultra detailed),(ultra realistic),(Best character details:1.2),dynamic angle,professional lighting, photon mapping, radiosity, physically-based rendering,blush,golden proportions,(shiny skin),makeup, (wavy gray hair and a sophisticated sense of style),(parted lips:1.1),red lipstick,wide shoulders, (hanfu, song style outfits, 1girl, light yellow with green with white short shan, light yellow with green with white pleated skirt, (red songmo: 1.2)),(Sky of background: 1.4),(full body: 1.2),looking at viewer &lt;lora:hanfu_v30:0.75&gt;
+</span></span></code></pre></div><h2 id="negative-prompt">Negative prompt</h2>
+<p>在反向提示词输入框输入：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(EasyNegative:1.2),(Bad_Prompt_v2:0.8),(Bad_Hands_5),sketch by Bad_Artist, (worst quality, low quality:1.4), (bad anatomy), watermark, signature, text, logo,contact, (extra limbs),Six fingers,Low quality fingers,monochrome,(((missing arms))),(((missing legs))), (((extra arms))),(((extra legs))),less fingers,lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, (depth of field, bokeh, blurry:1.4),blurry background,bandages,
+</span></span></code></pre></div><h2 id="meta">Meta</h2>
+<p>其他参数</p>
+<ul>
+<li>Size: 768x1152</li>
+<li>Seed: 3276150485</li>
+<li>Steps: 50</li>
+<li>Sampler: DPM++ SDE Karras</li>
+<li>CFG scale: 7</li>
+<li>Clip skip: 2</li>
+</ul>
+<p>面部修复和高清修复设置根据自己经验来。</p>
+<p>然后点击生成按钮。这个时候可能界面会没有反应，大家不要惊慌，我们点开 colab 页面，看到打印如图的日志，表示已经在生成了，进度到 100% 就 OK 了。</p>
+<p><img src="/image/post45/post45_9.png" alt="post45_9.png"></p>
+<p>然后点开 stable-diffusion 的界面，就看到图片生成好了，我们可以点击保存按钮，然后下载生成的图片。
+![[Pasted image 20230420212335.png]]</p>
+<p>好了，到这里本篇文章就结束了，祝大家玩的愉快。</p>
+<p>最后共享下我的colab <a href="https://colab.research.google.com/drive/1iWqnnreXoKhEA7c6bOQae5rlk4Jv5cE7?usp=sharing">https://colab.research.google.com/drive/1iWqnnreXoKhEA7c6bOQae5rlk4Jv5cE7?usp=sharing</a>
+以及我生成的几张图片。</p>
+<h2 id="作品分享">作品分享</h2>
+<p><img src="/image/post45/post45_10.png" alt="post45_10.png"></p>
+<p><img src="/image/post45/post45_11.png" alt="post45_11.png"></p>
+<p><img src="/image/post45/post45_12.png" alt="post45_12.png"></p>
+<p><img src="/image/post45/post45_13.png" alt="post45_13.png"></p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/">AI绘画</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/stablediffusion/">StableDiffusion</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo | </a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo | </a>
+        <a href="https://beian.miit.gov.cn/">苏ICP备17028833号-3</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+    </div>
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
