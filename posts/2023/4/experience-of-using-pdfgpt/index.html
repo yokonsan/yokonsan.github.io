@@ -8,11 +8,11 @@
 	
 	
 	
-	<title>对C站18万AI绘画的图片数据分析后 ｜ 乾之 三爻</title>
+	<title>pdfGPT｜无需阅读，让 PDF 和自己对话 ｜ 乾之 三爻</title>
 	
     
     
-    <meta name="description" content="项目源码：https://github.com/yokonsan/civitai-analysis $ find ./data -type f -name &amp;#34;*.txt&amp;#34; -print0 | xargs -0 wc -l | tail -1 181384 total 抓取 C 站 181384 张 SFW 图片数据抓取后，我发现： 玩家最喜欢的模型是chill" />
+    <meta name="description" content="目前 ChatGPT 无法直接与外部数据进行交互。如果我们能将自己的数据投喂给它，并且让它根据数据与我们对话，那么我们就能将 ChatGPT 变成自己的知识库。这种方法将使 ChatGPT 更加智能化和可定制化，更好地满足用户的需求。 因 OpenAI gpt-3" />
     
 
     
@@ -97,56 +97,48 @@
             <div class="post_page">
                 <div class="post animate__animated animate__fadeInDown">
                     <div class="post_title post_detail_title">
-                        <h2><a href='/posts/2023/4/data-analysis-of-c-station/'>对C站18万AI绘画的图片数据分析后</a></h2>
-                        <span class="date">2023.04.13</span>
+                        <h2><a href='/posts/2023/4/experience-of-using-pdfgpt/'>pdfGPT｜无需阅读，让 PDF 和自己对话</a></h2>
+                        <span class="date">2023.04.30</span>
                     </div>
-                    <div class="post_content markdown"><p>项目源码：<a href="https://github.com/yokonsan/civitai-analysis">https://github.com/yokonsan/civitai-analysis</a></p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ find ./data -type f -name <span class="s2">&#34;*.txt&#34;</span> -print0 <span class="p">|</span> xargs -0 wc -l <span class="p">|</span> tail -1
+                    <div class="post_content markdown"><p>目前 ChatGPT 无法直接与外部数据进行交互。如果我们能将自己的数据投喂给它，并且让它根据数据与我们对话，那么我们就能将 ChatGPT 变成自己的知识库。这种方法将使 ChatGPT 更加智能化和可定制化，更好地满足用户的需求。</p>
+<p>因 OpenAI <code>gpt-3.5-turbo</code>模型有 4096 个 tokens 的限制，我们不能将一个大文本传递给 OpenAI。一个好的解决方法是使用 embeddings，但这会消耗我们的 tokens。而本文介绍的 pdfGPT，使用<a href="https://tfhub.dev/google/collections/universal-sentence-encoder/1">universal-sentence-encoder</a>改进 embeddings。每次用户输入问题时，他会搜索文档中相关连的内容，然后将它传递给 ChatGPT，由 ChatGPT 回答用户的问题。</p>
+<h2 id="是什么">是什么</h2>
+<p>pdfGPT 允许用户使用 ChatGPT 与上传的 PDF 文件进行交流。该应用程序智能地将文档分成更小的块，并使用强大的<code>Deep Averaging Network Encoder</code>来生成 embeddings。</p>
+<p>pdfGPT 对 pdf 文件内容进行语义搜索，并将最相关的 embeddings 传递给 ChatGPT。pdfGPT 自定义逻辑生成精确的回答。回答内容会将引用信息所在的文件页码放在方括号（[]）中，从而增加回答的可信度，并有助于快速定位相关信息。</p>
+<p>开源地址：</p>
+<p><a href="https://github.com/bhaskatripathi/pdfGPT">https://github.com/bhaskatripathi/pdfGPT</a></p>
+<h3 id="项目-uml">项目 UML</h3>
+<p><img src="/image/post46/post46_1.png" alt="post46_1.png"></p>
+<h3 id="项目流程图">项目流程图</h3>
+<p><img src="/image/post46/post46_2.png" alt="post46_2.png"></p>
+<h2 id="使用体验">使用体验</h2>
+<p>这次我们依然白嫖<a href="https://colab.research.google.com">Google colab</a>的服务。现在让我们来体验下 pdfGPT 的能力吧。</p>
+<h3 id="安装依赖">安装依赖</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">!git clone https://github.com/bhaskatripathi/pdfGPT.git
+</span></span><span class="line"><span class="cl">!python -m pip install --upgrade pip
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="m">181384</span> total
-</span></span></code></pre></div><p>抓取 <a href="https://civitai.com/images">C 站</a> 181384 张 <code>SFW</code> 图片数据抓取后，我发现：</p>
-<ul>
-<li>玩家最喜欢的模型是<code>chilloutmix_NiPrunedFp32Fix</code>[<code>fc2511737a</code>]</li>
-<li>玩家最常用的正向提示词是<code>masterpiece</code>、<code>best quality</code>、<code>1girl</code>、<code>solo</code></li>
-<li>玩家最常用的反向提示词是<code>blurry</code>、<code>low quality</code>、<code>bad anatomy</code></li>
-<li>玩家生成图片尺寸最多的是<code>512x768</code>，其次是默认的<code>512x512</code></li>
-<li>玩家采样步数使用最多的是<code>20</code></li>
-<li>玩家采样器使用最多的是<code>DPM++ 2M Karras</code>，其次是默认的<code>Euler a</code></li>
-<li>玩家无分类指导规模值使用最多的是<code>7</code></li>
-</ul>
-<p>另外，我粗略的统计了指令中出现<code>girl</code>和<code>boy</code>的次数，然后出现<code>girl</code> 64251 次，出现<code>boy</code> 12053 次，只占了 6.4%。dddd xdm。</p>
-<h2 id="数据抓取">数据抓取</h2>
-<p>下载项目后，执行<code>python main.py</code>可抓取 C 站数据。另外<code>data</code>文件夹下是我已经下载后的数据。数据格式参考<code>_typing.py</code>文件。</p>
-<p>我只写了下载图片 meta 信息，并没有对图片进行下载。需要下载图片的可自行编辑。</p>
-<h2 id="数据分析">数据分析</h2>
-<p>数据分析部分，就是单纯的统计每一项的次数，没有其他分析。代码参考<code>analysis.py</code>。</p>
-<p>本次分析的数据都是<code>SFW</code>的数据，不包括<code>NSFW</code>。至于两个是什么区别呢，通俗易懂的解释是：</p>
-<ul>
-<li><code>SFW</code>是适合在工作场所浏览的内容；</li>
-<li><code>NSFW</code>是平台不让说的内容</li>
-</ul>
-<h3 id="model">Model</h3>
-<p><img src="/image/post43/top10_model.png" alt="top10_model.png">
-<a href="https://huggingface.co/naonovn/chilloutmix_NiPrunedFp32Fix">chilloutmix_NiPrunedFp32Fix</a>主要是针对亚洲网红脸训练的真人模型。也是我个人经常用的模型。
-<a href="https://civitai.com/models/4823/deliberate">deliberate</a> 模型提供了创建任何你想要的东西的能力。</p>
-<h3 id="sampler">Sampler</h3>
-<p><img src="/image/post43/top10_sampler.png" alt="top10_sampler.png"></p>
-<p>DPM++ 2M Karras 是用的最多的采样器。新手我更推荐<code>Euler a</code>。</p>
-<h3 id="steps">Steps</h3>
-<p><img src="/image/post43/top10_steps.png" alt="top10_steps.png">
-20 是默认的值，这个值一般都是设的 20-30 之间。更大的迭代步数可能会有更好的生成效果，更多细节和锐化，但是也会导致生成时间变长。</p>
-<h3 id="size">Size</h3>
-<p><img src="/image/post43/top10_size.png" alt="top10_size.png">
-尺寸太宽时，图中可能会出现多个主体。一般都是用的<strong>小尺寸+高清修复</strong>。更大的尺寸也需要更多的显存。</p>
-<h3 id="cfgscale">CfgScale</h3>
-<p><img src="/image/post43/top10_cfg_scale.png" alt="top10_cfg_scale.png">
-<code>cfg scale</code>  值越高，提示词对最终生成结果的影响越大，契合度越高。一般都是 6.5-8 之间。</p>
-<h3 id="prompt">Prompt</h3>
-<p><img src="/image/post43/top10_prompt.png" alt="top10_prompt.png">
-正向指令前两个都是画质相关的，<code>1girl</code>第三是我没有想到的。<code>1boy</code>太惨淡了。。。</p>
-<p><img src="/image/post43/top10_negative_prompt.png" alt="top10_negative_prompt.png"></p>
-<h4 id="提示词词云">提示词词云</h4>
-<p><img src="/image/post43/output.png" alt="output.png"></p>
+</span></span><span class="line"><span class="cl">!pip install PyMuPDF
+</span></span><span class="line"><span class="cl">!pip install numpy
+</span></span><span class="line"><span class="cl">!pip install scikit-learn
+</span></span><span class="line"><span class="cl">!pip install tensorflow
+</span></span><span class="line"><span class="cl">!pip install tensorflow-hub
+</span></span><span class="line"><span class="cl">!pip install openai
+</span></span><span class="line"><span class="cl">!pip install gradio
+</span></span></code></pre></div><p>这里直接根据依赖文件 <code>pip install -r requirements.txt</code> 时，会出现意料之外的报错。懒得去理会报错原因，我们直接手动安装这些依赖即可。</p>
+<h3 id="启动">启动</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">%cd pdfGPT
+</span></span><span class="line"><span class="cl">!python app.py
+</span></span></code></pre></div><p>项目通过 <code>gradio</code> 展示。我们直接根据表单提示，输入 OpenAI API key，并且上传我们的 PDF 文件或者输入文件的 URL 地址。然后我们在问题表单填入我们的问题，和 PDF 文件进行交流。</p>
+<p>我以之前写的 C 站数据分析文章生成的 PDF 文件为例，我们向它提问：<code>chilloutmix</code> 是什么。它正确的返回了答案，并且标注了数据出处所在的页码。</p>
+<p><img src="/image/post46/post46_3.png" alt="post46_3.png"></p>
+<p>我们可以修改代码，添加 gradio 的 launch 参数<code>share=True</code>，向朋友分享自己的服务。添加 OpenAI key 输入框参数 <code>type=&quot;password&quot;</code>，使得前端输入 key 时，不明文展示在前端。</p>
+<h2 id="不足">不足</h2>
+<p>当我们上传中文 PDF 大文件时，会出现<code>openai.error.InvalidRequestError</code> 报错。我们可以使用 OpenAI 官方提供的<code>tiktoken</code> 库计算 tokens 来拆分文本，以解决这个问题。这里大家自行处理。</p>
+<h2 id="总结">总结</h2>
+<p>本文介绍了 <code>pdfGPT</code> ，并体验了它的能力。它向我们展示了通过投喂 PDF 文件内容给 ChatGPT，让他成为我们私人知识库的能力。
+虽然它还有很大的不足，但它只是个 demo，大家可以自由探索。</p>
+<hr>
+<p>我思考了下，这个方案比较适合的场景：<strong>就是那些不看文档就直接问问题的同事或者甲方，让他们自己问去吧。</strong></p>
 </div>
                     <div class="post_footer">
                         
@@ -155,9 +147,7 @@
                                 <span class="field tags">
                                     <i class="ri-stack-line"></i>
                                     
-                                    <a href="https://yokonsan.com/tags/ai%E7%BB%98%E7%94%BB/">AI绘画</a>
-                                    
-                                    <a href="https://yokonsan.com/tags/stablediffusion/">StableDiffusion</a>
+                                    <a href="https://yokonsan.com/tags/chatgpt/">ChatGPT</a>
                                     
                                 </span>
                             </div>

@@ -6,7 +6,16 @@
     <description>Recent content on 乾之 三爻</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 21 Apr 2023 15:15:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Apr 2023 10:10:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>pdfGPT｜无需阅读，让 PDF 和自己对话</title>
+      <link>https://yokonsan.com/posts/2023/4/experience-of-using-pdfgpt/</link>
+      <pubDate>Sun, 30 Apr 2023 10:10:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.com/posts/2023/4/experience-of-using-pdfgpt/</guid>
+      <description>目前 ChatGPT 无法直接与外部数据进行交互。如果我们能将自己的数据投喂给它，并且让它根据数据与我们对话，那么我们就能将 ChatGPT 变成自己的知识库。这种方法将使 ChatGPT 更加智能化和可定制化，更好地满足用户的需求。 因 OpenAI gpt-3</description>
+    </item>
+    
     <item>
       <title>如何白嫖 Stable-Diffusion 服务</title>
       <link>https://yokonsan.com/posts/2023/4/free-use-stable-diffusion-service/</link>
@@ -58,7 +67,7 @@
       <pubDate>Sun, 01 Jan 2023 14:04:12 +0800</pubDate>
       
       <guid>https://yokonsan.com/links/</guid>
-      <description>有朋自远方来，不亦乐乎 朋友 - 收藏 知乎 ChatGPT Server</description>
+      <description>有朋自远方来，不亦乐乎 朋友 - 收藏 知乎 AI 领域</description>
     </item>
     
     <item>
