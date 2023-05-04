@@ -2,27 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yokonsan.com/tags/chatgpt/</loc>
-    <lastmod>2023-04-30T10:10:37+08:00</lastmod>
+    <loc>https://yokonsan.com/tags/autogpt/</loc>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://yokonsan.com/posts/2023/4/experience-of-using-pdfgpt/</loc>
-    <lastmod>2023-04-30T10:10:37+08:00</lastmod>
+    <loc>https://yokonsan.com/posts/2023/5/experience-of-using-autogpt/</loc>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/tags/chatgpt/</loc>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/posts/</loc>
-    <lastmod>2023-04-30T10:10:37+08:00</lastmod>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/tags/</loc>
-    <lastmod>2023-04-30T10:10:37+08:00</lastmod>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://yokonsan.com/</loc>
+    <lastmod>2023-05-04T10:10:37+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://yokonsan.com/posts/2023/4/experience-of-using-pdfgpt/</loc>
     <lastmod>2023-04-30T10:10:37+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
