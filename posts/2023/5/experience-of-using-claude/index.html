@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Claude｜媲美ChatGPT，如何免费接入到个人服务 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="前段时间 Claude 很火，在网上被说成是 ChatGPT 的最强对手，是 ChatGPT 的替代品。本文我将介绍下 Claude 是什么，以及如何免费使用 Claude。 当然本篇文章肯定不会只说这些无聊的内容，最后我会实践下如何免费接入我们的 web 服务。注意，这" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/links/">Links</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                
+                <a href="https://ai.yokonsan.com" title="instagram" target="_blank"><i class="ri-instagram-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2023/5/experience-of-using-claude/'>Claude｜媲美ChatGPT，如何免费接入到个人服务</a></h2>
+                        <span class="date">2023.05.08</span>
+                    </div>
+                    <div class="post_content markdown"><p>前段时间 Claude 很火，在网上被说成是 ChatGPT 的最强对手，是 ChatGPT 的替代品。本文我将介绍下 Claude 是什么，以及如何免费使用 Claude。</p>
+<p>当然本篇文章肯定不会只说这些无聊的内容，最后我会实践下如何免费接入我们的 web 服务。注意，这里接入是在没有申请到 api 的情况下做的。</p>
+<h2 id="claude">Claude</h2>
+<p>我们让 Claude 自我介绍下：</p>
+<blockquote>
+<p>Claude 是一款开源的中文聊天机器人。它由 Anthropic 开发，用于自然对话和问答。Claude 具有以下主要功能：</p>
+<ol>
+<li>自然语言理解能力。claude 可以理解人类的自然语言，并作出相应的响应。</li>
+<li>知识图谱。claude 内置了大量常识知识，这些知识来源于维基百科和其他开放数据源。</li>
+<li>智能问答。claude 可以自动回答关于常识知识的问题。如果它没有找到准确的答案，它会说“我不知道”。</li>
+<li>可扩展的知识。claude 的知识是动态扩展的，会随着时间的推移而不断丰富。</li>
+<li>中文支持。claude 可以理解和生成中文文本，这是它区别于其他机器人的一个重要特点。</li>
+<li>个性管理。claude 有不同的语言风格和个性，用户可以选择不同的语言风格和个性。</li>
+<li>安全考虑。claude 在回答问题和生成响应时会考虑安全和道德因素。它不会生成任何有害、欺诈、危险或非法的内容。</li>
+</ol>
+<p>综上，claude 是一个功能强大而且安全可靠的中文智能聊天机器人。它可以应用于各种场景,如智能客服、线上助手等。</p>
+</blockquote>
+<p><img src="/image/post48/post48_1.png" alt="post48_1.png"></p>
+<h2 id="claude-in-slack">Claude in Slack</h2>
+<p>Slack 是一款流行的团队协作和通讯软件。</p>
+<p>Claude 官方给我定义了很方便的 Slack 应用 <code>Claude-in-Slack</code>，我们直接把它添加到 Slack 中即可使用。添加的操作也很简单：</p>
+<ol>
+<li>先注册 <a href="https://app.slack.com/">Slack</a></li>
+<li>到 <a href="https://www.anthropic.com/index/claude-now-in-slack">Claude 官网</a>，点击 <code>Add to Slack</code></li>
+<li>在跳转的页面点击 <strong>添加到 Slack</strong></li>
+<li>在 Slack 中选择 Claude 应用，进入聊天窗口开始使用</li>
+</ol>
+<h2 id="slack-api">Slack API</h2>
+<p>当然这些内容在搜索引擎上能检索出一大堆，那我写这篇文章干啥呢，就为了水一篇吗？
+当然不是，标题是<strong>如何接入到个人服务</strong>，这里说的当然不是仅仅通过 slack 使用。</p>
+<p>虽然 Claude 开放了 API 的申请，我的 ChatGPT 4.0 API 都通过了，Claude API 还是没有下文。但是我想接入到我的服务中，只是通过 slack 来使用的话，显然不满足我的需求。</p>
+<p><strong>难道没有 API 权限就无法使用了吗？</strong></p>
+<p>我在查询了各大论坛，直到看到一个网友说：</p>
+<p><img src="/image/post48/post48_2.png" alt="post48_2.png"></p>
+<hr>
+<p>Slack 为我们提供了各个语言的 SDK，我们以 <a href="https://github.com/SlackAPI/python-slack-sdk">python-slack-sdk</a> 来作为演示示例。代码会提供在 GitHub，觉得有用的大伙给个 Star 吧。</p>
+<h3 id="slack-token">Slack Token</h3>
+<p>为了使用 Slack 的 SDK，我们需要<a href="https://api.slack.com/apps">新建一个 Slack APP</a>。</p>
+<p><img src="/image/post48/post48_3.png" alt="post48_3.png"></p>
+<p>输入 app 名称并选择自己的 workspace。
+<img src="/image/post48/post48_4.png" alt="post48_4.png">
+创建后点击我们的 APP，然后点击左侧栏的 <a href="https://api.slack.com/apps/A056XHA4NN5/oauth?">OAuth &amp; Permissions</a>。下拉找到 <strong>Scopes</strong>，为我们的 User Token 添加 Scope。
+<img src="/image/post48/post48_5.png" alt="post48_5.png"></p>
+<p>这里 Slack 下面也说了，可以根据使用到的 API 来选择 scope。具体 API 对应的 scope 大家可以自行通过 <a href="https://api.slack.com/methods">Slack API methods</a> 了解。本次演示我只用到了如下 API：</p>
+<ol>
+<li><code>conversations.open</code>：打开会话。依赖 scopes：
+<ul>
+<li><code>channels:write</code></li>
+</ul>
+</li>
+<li><code>chat.postMessage</code>：频道内发送消息。依赖 scopes：
+<ul>
+<li><code>chat:write</code></li>
+<li><code>im:write</code></li>
+</ul>
+</li>
+<li><code>conversations.history</code>：获取对话的消息和事件历史记录。依赖 scopes：
+<ul>
+<li><code>channels:history</code></li>
+<li><code>im:history</code></li>
+</ul>
+</li>
+</ol>
+<p>我们把依赖的三个 scopes，依次添加到 User Token Scopes 中。</p>
+<p>然后我们把 APP 安装到我们的 workspace 中：
+<img src="/image/post48/post48_6.png" alt="post48_6.png">
+安装后，这里会生成我们需要的 <code>User OAuth Token</code>，我们复制这个 Token，后面需要用。</p>
+<h3 id="claude-bot-id">Claude Bot ID</h3>
+<p>我们进入我们的 Slack 应用页面，找到我们的 Claude 应用，右击然后选择查看应用详情，复制 Claude 的成员 ID。后面需要用到。</p>
+<p><img src="/image/post48/post48_7.png" alt="post48_7.png"></p>
+<h2 id="slack-claude-server">Slack Claude Server</h2>
+<p>走完上面的流程后，我们已经拿到了我们需要的两个值。</p>
+<ol>
+<li>User Token</li>
+<li>Claude Bot ID</li>
+</ol>
+<p>下面就开始开发我们的服务了。</p>
+<h3 id="打开频道">打开频道</h3>
+<p>首先，我们要先通过 API 开启我们的会话。因为我的服务都是 async 的，这里我选择使用 Slack-SDK 的<code>AsyncWebClient</code>客户端类。我们定义 Client 类封装下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">slack_sdk.web.async_client</span> <span class="kn">import</span> <span class="n">AsyncWebClient</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">slack_sdk.errors</span> <span class="kn">import</span> <span class="n">SlackApiError</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">CLAUDE_BOT_ID</span> <span class="o">=</span> <span class="s2">&#34;xxxxxxx&#34;</span>  <span class="c1"># 我们上面获取到的 Claude Bot ID</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SlackClient</span><span class="p">(</span><span class="n">AsyncWebClient</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">CHANNEL_ID</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># 属性：频道ID</span>
+</span></span></code></pre></div><p>我们通过 sdk 提供的<code>conversations_open</code> 来打开频道会话：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">def</span> <span class="nf">open_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversations_open</span><span class="p">(</span><span class="n">users</span><span class="o">=</span><span class="n">CLAUDE_BOT_ID</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">CHANNEL_ID</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s2">&#34;channel&#34;</span><span class="p">][</span><span class="s2">&#34;id&#34;</span><span class="p">]</span>
+</span></span></code></pre></div><h3 id="发送消息">发送消息</h3>
+<p>通过<code>chat_postMessage</code>发送消息：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">def</span> <span class="nf">chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHANNEL_ID</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&#34;Channel not found.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat_postMessage</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CHANNEL_ID</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="bp">self</span><span class="o">.</span><span class="n">LAST_TS</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&#34;ts&#34;</span><span class="p">]</span>
+</span></span></code></pre></div><p>这里我们记录下我们消息的时间，用于后面获取回复时作为参数。</p>
+<h3 id="获取回复">获取回复</h3>
+<p>这里我们循环去获取 Claude 最新的回复消息列表，我们取最后一条结果：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">def</span> <span class="nf">get_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">150</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">conversations_history</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CHANNEL_ID</span><span class="p">,</span> <span class="n">oldest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">LAST_TS</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">msg</span> <span class="o">=</span> <span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s2">&#34;text&#34;</span><span class="p">]</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&#34;messages&#34;</span><span class="p">]</span> <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&#34;user&#34;</span><span class="p">]</span> <span class="o">==</span> <span class="n">CLAUDE_BOT_ID</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">msg</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&#34;Typing…_&#34;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">msg</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="p">(</span><span class="n">SlackApiError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Get reply error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&#34;Get replay timeout&#34;</span><span class="p">)</span>
+</span></span></code></pre></div><p>我设定了 300 秒内，无响应则抛出异常。</p>
+<h3 id="测试">测试</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">async</span> <span class="k">def</span> <span class="nf">server</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">	<span class="n">client</span> <span class="o">=</span> <span class="n">SlackClient</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&#34;SLACK_USER_TOKEN&#34;</span><span class="p">))</span>  <span class="c1"># 自己的Token</span>
+</span></span><span class="line"><span class="cl">	<span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">open_channel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">		<span class="n">prompt</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&#34;You: &#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="n">reply</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_reply</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Claude: </span><span class="si">{</span><span class="n">reply</span><span class="si">}</span><span class="se">\n</span><span class="s2">--------------------&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">server</span><span class="p">())</span>
+</span></span></code></pre></div><p><img src="/image/post48/post48_8.png" alt="post48_8.png"></p>
+<p>可以看到我已经成功和 Claude 交流了。这样的话我们的目的就达成了，后面怎么把它接入我们的自己的系统，大家可以自由发挥。</p>
+<p>这里我给大家部署了个单进程 <a href="https://claude.yokonsan.com/docs">api 服务</a>（不会长期开启），大家可以体验下 Claude 的能力。</p>
+<h4 id="对话">对话</h4>
+<p>有多并发可能会消息错乱，只作为 demo 使用。对话完记得调用清除接口清空会话。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">curl -X &#39;POST&#39; \
+</span></span><span class="line"><span class="cl">  &#39;https://claude.yokonsan.com/claude/chat&#39; \
+</span></span><span class="line"><span class="cl">  -H &#39;accept: application/json&#39; \
+</span></span><span class="line"><span class="cl">  -H &#39;x-token: 13832bf5-ed7c-4b5c-a30b-e7db48d25b86&#39; \
+</span></span><span class="line"><span class="cl">  -H &#39;Content-Type: application/json&#39; \
+</span></span><span class="line"><span class="cl">  -d &#39;{
+</span></span><span class="line"><span class="cl">  &#34;prompt&#34;: &#34;你好&#34;
+</span></span><span class="line"><span class="cl">}&#39;
+</span></span></code></pre></div><h4 id="清空会话">清空会话</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">curl -X &#39;POST&#39; \
+</span></span><span class="line"><span class="cl">  &#39;https://claude.yokonsan.com/claude/reset&#39; \
+</span></span><span class="line"><span class="cl">  -H &#39;x-token: 13832bf5-ed7c-4b5c-a30b-e7db48d25b86&#39; \
+</span></span><span class="line"><span class="cl">  -H &#39;accept: application/json&#39; \
+</span></span><span class="line"><span class="cl">  -d &#39;&#39;
+</span></span></code></pre></div><h2 id="总结">总结</h2>
+<p>本文介绍了 Claude，以及如何在 Slack 中免费使用 Claude。然后我带大家搭建了自己的个人 Claude 服务，演示如何将 Claude 免费接入自己的系统。</p>
+<p>大家可以在 GitHub 我的仓库 <a href="https://github.com/yokonsan/claude-in-slack-api">claude-in-slack-api</a>查看我的代码，大家觉得有用的话，可以点个 star。</p>
+<p>Claude 虽然被吹捧的很高，但对比下还是比 ChatGPT 差很多。大家自行多多体验。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/claude/">Claude</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/aigc/">AIGC</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo | </a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo | </a>
+        <a href="https://beian.miit.gov.cn/">苏ICP备17028833号-3</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+        
+    </div>
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?7256012830beb794d5f4468b53b5891e";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+        
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
