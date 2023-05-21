@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Midjourney on 乾之 三爻</title>
+    <link>https://yokonsan.com/tags/midjourney/</link>
+    <description>Recent content in Midjourney on 乾之 三爻</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 21 May 2023 10:21:37 +0800</lastBuildDate><atom:link href="https://yokonsan.com/tags/midjourney/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Midjourney｜如何集成到自己的平台</title>
+      <link>https://yokonsan.com/posts/2023/5/midjourney-api/</link>
+      <pubDate>Sun, 21 May 2023 10:21:37 +0800</pubDate>
+      
+      <guid>https://yokonsan.com/posts/2023/5/midjourney-api/</guid>
+      <description>最近想着把 Midjourney 接入到自己的平台，但由于 Midjourney 没有开放接口，所以退而求其次。利用 Discord 的 Bot API，通过下发/imagine命令，创建 Midjourney bot 的绘画任务。并实时监听 Midjourney bot 的消息，回传给平台。这样就基本上满足我的需求了。 本</description>
+    </item>
+    
+  </channel>
+</rss>

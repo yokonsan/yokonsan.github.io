@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="yokonsan" />
+	
+	
+	
+	<title>Midjourney｜如何集成到自己的平台 ｜ 乾之 三爻</title>
+	
+    
+    
+    <meta name="description" content="最近想着把 Midjourney 接入到自己的平台，但由于 Midjourney 没有开放接口，所以退而求其次。利用 Discord 的 Bot API，通过下发/imagine命令，创建 Midjourney bot 的绘画任务。并实时监听 Midjourney bot 的消息，回传给平台。这样就基本上满足我的需求了。 本" />
+    
+
+    
+    
+    <meta name="keywords" content="技术, 生活, 分享" />
+    
+
+	
+    
+    <link rel="shortcut icon" href="https://yokonsan.com/images/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/zozo.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="https://yokonsan.com/css/highlight.css" />
+
+    
+    
+</head>
+
+<body>
+    <div class="main animate__animated animate__fadeInDown">
+        <div class="nav_container animated fadeInDown">
+    <div class="site_nav" id="site_nav">
+        <ul>
+            
+            <li>
+                <a href="/">Home</a>
+            </li>
+            
+            <li>
+                <a href="/posts/">Archive</a>
+            </li>
+            
+            <li>
+                <a href="/tags/">Tags</a>
+            </li>
+            
+            <li>
+                <a href="/about/">About</a>
+            </li>
+            
+            <li>
+                <a href="/links/">Links</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="menu_icon">
+        <a id="menu_icon"><i class="ri-menu-line"></i></a>
+    </div>
+</div>
+        <div class="header animated fadeInDown">
+    <div class="site_title_container">
+        <div class="site_title">
+            <h1>
+                <a href="https://yokonsan.com/">
+                    <span>乾之 三爻</span>
+                </a>
+            </h1>
+        </div>
+        <div class="description">
+            <p class="sub_title">yokon&#39;s blog</p>
+            <div class="my_socials">
+                
+                
+                <a href="https://github.com/yokonsan" title="github" target="_blank"><i class="ri-github-fill"></i></a>
+                
+                
+                
+                <a href="https://ai.yokonsan.com" title="instagram" target="_blank"><i class="ri-instagram-fill"></i></a>
+                
+                
+                <a href="https://yokonsan.com/index.xml" type="application/rss+xml" title="rss" target="_blank"><i
+                        class="ri-rss-fill"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="content">
+            <div class="post_page">
+                <div class="post animate__animated animate__fadeInDown">
+                    <div class="post_title post_detail_title">
+                        <h2><a href='/posts/2023/5/midjourney-api/'>Midjourney｜如何集成到自己的平台</a></h2>
+                        <span class="date">2023.05.21</span>
+                    </div>
+                    <div class="post_content markdown"><p>最近想着把 Midjourney 接入到自己的平台，但由于 Midjourney 没有开放接口，所以退而求其次。利用 Discord 的 Bot API，通过下发<code>/imagine</code>命令，创建 Midjourney bot 的绘画任务。并实时监听 Midjourney bot 的消息，回传给平台。这样就基本上满足我的需求了。</p>
+<p>本篇文章我会介绍下我实现的 Midjourney API 项目，并且附上使用教程。</p>
+<p>大致的流程如图：</p>
+<p><img src="/image/post49/post49_1.png" alt="post49_1.png"></p>
+<h2 id="midjourney-api">midjourney-api</h2>
+<p>开源地址：<a href="https://github.com/yokonsan/midjourney-api">https://github.com/yokonsan/midjourney-api</a></p>
+<p>该仓库是我在将 Midjourney 接入到平台，开发的一套接口。个人使用下来基本满足大部分需求，现在开源出来，仅供大家参考。大家觉得有用可以点个 star，发现有 bug 可以提 issue 或 pr。</p>
+<p>具体的开发细节就不展开了，本篇文章说下如何使用该仓库。</p>
+<h2 id="准备工作">准备工作</h2>
+<p>注意：本仓库依赖于 Discord 开发的 API，对于如何访问 Discord，大家自行寻找方法。<strong>这里默认大家已经在 Discord 创建了自己的服务器，并且将 Midjourney 添加到服务器内。</strong></p>
+<p>使用该仓库我们需要 4 个参数：</p>
+<ol>
+<li>用户 Token（调用 API 需要身份验证）</li>
+<li>创建的 Discord 机器人 Token（实时监听 Midjourney 会话）</li>
+<li>Discord 自建服务器 ID</li>
+<li>Midjourney bot 所在频道 ID</li>
+</ol>
+<p>如果大家知道如何获取这几个参数，可以跳到下一节。</p>
+<h3 id="用户-token">用户 Token</h3>
+<p>登录网页端 discord 按<code>F12</code>打开开发者工具，然后刷新页面。参考下图点击<code>Network</code>，在 filter 栏输入<code>/api/library</code>找到这条请求记录，然后在请求体中找到<code>authorization</code>字段，他的值就是我们需要的 Token。</p>
+<p><strong>注意：该 Token 属于隐私信息，不要直接暴露在代码中发布到 Github。</strong></p>
+<p><img src="/image/post49/post49_2.png" alt="post49_2.png"></p>
+<h3 id="机器人-token">机器人 Token</h3>
+<p>这里需要先创建 discord 机器人，地址：<a href="https://discord.com/developers/applications">https://discord.com/developers/applications</a></p>
+<p>创建过程很简单，不做赘述。</p>
+<p><img src="/image/post49/post49_3.png" alt="post49_3.png"></p>
+<p>我们点击<code>Reset Token</code>，然后<code>copy</code>这串 Token 即可。</p>
+<p>但是我们需要我们的机器人能够干活，还需要给他添加些 Scopes。</p>
+<p><img src="/image/post49/post49_4.png" alt="post49_4.png"></p>
+<p>勾选上 Scope 后，页面下方会生成一个 Oauth2 授权链接。我们复制该链接然后在浏览器打开。</p>
+<p>打开后会出现 OAuth2 授权页面，我们将机器人添加到我们的服务器即可。</p>
+<h3 id="服务器-id频道-id">服务器 ID、频道 ID</h3>
+<p>这里比较简单，我们先打开开发者模式：</p>
+<p><img src="/image/post49/post49_5.png" alt="post49_5.png"></p>
+<p>然后鼠标右击服务器头像，复制服务器 ID。频道也一样，右击频道，复制频道 ID。</p>
+<h2 id="安装启动">安装启动</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone
+</span></span><span class="line"><span class="cl">pip install -r requirements.txt
+</span></span></code></pre></div><p>将<code>.env.template</code>重命名为<code>.env</code>，并填入参数值：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">USER_TOKEN=用户token
+</span></span><span class="line"><span class="cl">BOT_TOKEN=机器人token
+</span></span><span class="line"><span class="cl">GUILD_ID=服务器ID
+</span></span><span class="line"><span class="cl">CHANNEL_ID=频道ID
+</span></span><span class="line"><span class="cl">CALLBACK_URL=回调地址，默认http post请求
+</span></span></code></pre></div><h3 id="直接启动">直接启动</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 启动监听机器人</span>
+</span></span><span class="line"><span class="cl">python task_bot.py
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动http服务</span>
+</span></span><span class="line"><span class="cl">python server.py
+</span></span></code></pre></div><h3 id="docker-启动">docker 启动</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 构建镜像  </span>
+</span></span><span class="line"><span class="cl">sh build.sh  
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动容器  </span>
+</span></span><span class="line"><span class="cl">sh start.sh
+</span></span></code></pre></div><p>启动后访问接口<code>swagger</code>文档：http://127.0.0.1:8061/docs</p>
+<p><code>midjourney-api</code> 提供接口：</p>
+<ol>
+<li><code>/v1/api/trigger/bot</code>：触发绘画任务，已完成</li>
+<li><code>/v1/api/upload</code>：上传图片，触发任务，待开发</li>
+</ol>
+<h2 id="使用">使用</h2>
+<p>目前只完成了触发绘画任务的接口，我们以此为示例。该接口调用需要参数：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TriggerType</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">generate</span> <span class="o">=</span> <span class="s2">&#34;generate&#34;</span>  <span class="c1"># /imagine 根据提示词，生成图片</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upscale</span> <span class="o">=</span> <span class="s2">&#34;upscale&#34;</span>  <span class="c1"># U 选择索引高清放大</span>
+</span></span><span class="line"><span class="cl">    <span class="n">variation</span> <span class="o">=</span> <span class="s2">&#34;variation&#34;</span>  <span class="c1"># V 基于索引风格变化</span>
+</span></span><span class="line"><span class="cl">    <span class="n">reset</span> <span class="o">=</span> <span class="s2">&#34;reset&#34;</span>  <span class="c1"># 重绘</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TriggerBotIn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">type</span><span class="p">:</span> <span class="n">TriggerType</span>  <span class="c1"># 触发类型</span>
+</span></span><span class="line"><span class="cl">    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>  <span class="c1"># 提示词</span>
+</span></span><span class="line"><span class="cl">    <span class="n">msg_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>  <span class="c1"># 消息ID，</span>
+</span></span><span class="line"><span class="cl">    <span class="n">msg_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>  <span class="c1"># 消息hash</span>
+</span></span><span class="line"><span class="cl">    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 图片索引，1-4</span>
+</span></span></code></pre></div><h3 id="generate">generate</h3>
+<p>直接调用接口 <code>/v1/api/trigger/bot</code> 生成，提示词：<code>half fish half dragon hybrid, retro screencap --ar 2:3 --niji 5</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X <span class="s1">&#39;POST&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="s1">&#39;http://127.0.0.1:8062/v1/api/trigger/bot&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;accept: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -d <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;type&#34;: &#34;generate&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;prompt&#34;: &#34;half fish half dragon hybrid, retro screencap --ar 2:3 --niji 5&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_id&#34;: &#34;&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_hash&#34;: &#34;&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;index&#34;: 0
+</span></span></span><span class="line"><span class="cl"><span class="s1">}&#39;</span>
+</span></span></code></pre></div><p><img src="/image/post49/post49_6.png" alt="post49_6.png"></p>
+<p>可以看到我们启动的<code>task_bot.py</code>监听服务，已经监听到消息日志：</p>
+<p><img src="/image/post49/post49_7.png" alt="post49_7.png"></p>
+<h3 id="upscale">upscale</h3>
+<p>这里我觉得第二张比较符合预期，我们接续调接口放大图片增加细节。这里需要取到 msg_id 和 msg_hash 字段的值。msg_id 就是 CallbackData 的 id 字段，msg_hash 是 Attachment 的 url 去掉后缀，根据<code>_</code>分割的最后一段。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Attachment</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="n">proxy_url</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ephemeral</span><span class="p">:</span> <span class="nb">bool</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">CallbackData</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+</span></span><span class="line"><span class="cl">    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
+</span></span><span class="line"><span class="cl">    <span class="n">attachments</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Attachment</span><span class="p">]</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X <span class="s1">&#39;POST&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="s1">&#39;http://127.0.0.1:8062/v1/api/trigger/bot&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;accept: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -d <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;type&#34;: &#34;upscale&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;prompt&#34;: &#34;&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_id&#34;: &#34;1109686524045443093&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_hash&#34;: &#34;c937b5aa-3f58-4ae5-8dd6-932952243034&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;index&#34;: 2
+</span></span></span><span class="line"><span class="cl"><span class="s1">}&#39;</span>
+</span></span></code></pre></div><p>注意：这里索引是图片的 1-4，不是 0-3</p>
+<p><img src="/image/post49/post49_8.png" alt="post49_8.png"></p>
+<h3 id="variation">variation</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X <span class="s1">&#39;POST&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="s1">&#39;http://127.0.0.1:8062/v1/api/trigger/bot&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;accept: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -d <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;type&#34;: &#34;variation&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;prompt&#34;: &#34;&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_id&#34;: &#34;1109686524045443093&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_hash&#34;: &#34;c937b5aa-3f58-4ae5-8dd6-932952243034&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;index&#34;: 2
+</span></span></span><span class="line"><span class="cl"><span class="s1">}&#39;</span>
+</span></span></code></pre></div><p>这里我们基于第 2 张图的风格，再生成 4 张。</p>
+<p><img src="/image/post49/post49_9.png" alt="post49_9.png"></p>
+<h3 id="reset">reset</h3>
+<p>基于提示词重绘：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X <span class="s1">&#39;POST&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  <span class="s1">&#39;http://127.0.0.1:8062/v1/api/trigger/bot&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;accept: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -H <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -d <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;type&#34;: &#34;reset&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;prompt&#34;: &#34;&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_id&#34;: &#34;1109686524045443093&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;msg_hash&#34;: &#34;c937b5aa-3f58-4ae5-8dd6-932952243034&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">  &#34;index&#34;: 0
+</span></span></span><span class="line"><span class="cl"><span class="s1">}&#39;</span>
+</span></span></code></pre></div><p><img src="/image/post49/post49_10.png" alt="post49_10.png"></p>
+<h2 id="总结">总结</h2>
+<p>本篇文章主要介绍了如何接入 Midjourney，然后介绍了我的开源项目 <a href="https://github.com/yokonsan/midjourney-api">midjourney-api</a>，并介绍了如何使用该项目。</p>
+<p>依据改仓库，大家可以很方便的将 Midjourney 对接到 QQ、微信、钉钉等平台。如果大家感兴趣，我将会带大家制作一个微信机器人或者将它接入到我的个人公众号。</p>
+<p>当然，改仓库还有很多未完善的地方，比如图生图。这些功能我后续会继续补充，也欢迎大家参与进来。开源地址：<a href="https://github.com/yokonsan/midjourney-api">https://github.com/yokonsan/midjourney-api</a></p>
+<p>相比于 Stable-Diffusion，Midjourney 对新手更加友好。大家自行体验。</p>
+</div>
+                    <div class="post_footer">
+                        
+                        <div class="meta">
+                            <div class="info">
+                                <span class="field tags">
+                                    <i class="ri-stack-line"></i>
+                                    
+                                    <a href="https://yokonsan.com/tags/midjourney/">Midjourney</a>
+                                    
+                                    <a href="https://yokonsan.com/tags/aigc/">AIGC</a>
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                
+                <div class="doc_comments"></div>
+                
+            </div>
+        </div>
+    </div>
+    <a id="back_to_top" href="#" class="back_to_top"><i class="ri-arrow-up-s-line"></i></a>
+    <footer class="footer">
+    <div class="powered_by">
+        <a href="https://github.com/varkai/hugo-theme-zozo">Designed by zozo | </a>
+        <a href="http://www.gohugo.io/">Proudly published with Hugo | </a>
+        <a href="https://beian.miit.gov.cn/">苏ICP备17028833号-3</a>
+    </div>
+
+    <div class="footer_slogan">
+        <span>君子终日乾乾，夕惕若厉，无咎。</span>
+        
+    </div>
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?7256012830beb794d5f4468b53b5891e";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+        
+</footer>
+    <script src="https://yokonsan.com/js/jquery-3.5.1.min.js"></script>
+<link href="https://yokonsan.com/css/fancybox.min.css" rel="stylesheet">
+<script src="https://yokonsan.com/js/fancybox.min.js"></script>
+<script src="https://yokonsan.com/js/zozo.js"></script>
+
+
+<script type="text/javascript" async
+    src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\[\[', '\]\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                TeX: {
+                    equationNumbers: { autoNumber: "AMS" },
+                    extensions: ["AMSmath.js", "AMSsymbols.js"]
+                }
+            }
+        });
+
+        MathJax.Hub.Queue(function () {
+            
+            
+            
+            var all = MathJax.Hub.getAllJax(), i;
+            for (i = 0; i < all.length; i += 1) {
+                all[i].SourceElement().parentNode.className += ' has-jax';
+            }
+        });
+    </script>
+
+<style>
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+</style>
+
+
+
+</body>
+
+</html>
